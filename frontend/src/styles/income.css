@@ -32,6 +32,7 @@
 
 .cardIncome-btn {
     display: flex;
+
 }
 
 .card-btn-edit-income {
@@ -69,6 +70,7 @@
 
 .card-add {
     position: relative;
+    height: 121px;
 }
 
 .card-btn-add-income {
