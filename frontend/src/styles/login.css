@@ -1,0 +1,88 @@
+body {
+
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+}
+
+.wrapper-login {
+    display: inline-block;
+    vertical-align: middle;
+
+}
+.login-title {
+    font-size: 40px;
+    text-align: center;
+    color: #052c65;
+    margin-top: 60px;
+    margin-bottom: 20px;
+    font-family: "RobotoRegular", sans-serif;
+}
+.input-group-text {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    border: 1px solid #CED4DA;
+    border-radius: 4px;
+    width: 397px;
+    height: 38px;
+    font-family: "RobotoMedium", sans-serif;
+}
+.input-group-email, .input-group-password {
+    margin-bottom: 10px;
+}
+.form-control {
+    border: none;
+    outline: none;
+    flex: 1;
+}
+.iCheck {
+    font-size: 12px;
+    line-height: 192%;
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+.btn-signUp {
+    margin-top: 20px;
+    font-size: 15px;
+    text-align: center;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 16px;
+    width: 397px;
+    height: 38px;
+    background: #0d6efd;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: RobotoRegular, sans-serif;
+}
+.btn-signUp:hover {
+    background: #043c88;
+}
+.btn-signUp:disabled {
+    background: #e2dfe7;
+    cursor: not-allowed;
+}
+.form-link-login {
+    font-size: 12px;
+    color: #000;
+    display: flex;
+
+    margin-top: 10px;
+}
+.form-link-login a {
+    margin-left: 10px;
+    font-size: 12px;
+    text-decoration: underline;
+    text-decoration-skip-ink: none;
+    color: #0d6efd;
+}

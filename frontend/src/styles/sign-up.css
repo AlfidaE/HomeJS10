@@ -1,0 +1,78 @@
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.wrapper {
+    display: inline-block;
+    vertical-align: middle;
+
+}
+.sign-up-title {
+    font-size: 40px;
+    text-align: center;
+    color: #052c65;
+    margin-top: 60px;
+    margin-bottom: 20px;
+    font-family: 'RobotoRegular', sans-serif;
+}
+.input-group-text {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    border: 1px solid #CED4DA;
+    border-radius: 4px;
+    width: 397px;
+    height: 38px;
+}
+.ig {
+    margin-bottom: 10px;
+}
+.form-control {
+    border: none;
+    outline: none;
+    flex: 1;
+}
+.iCheck {
+    font-size: 12px;
+    line-height: 192%;
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+.btn-signUp {
+    margin-top: 20px;
+    font-size: 15px;
+    text-align: center;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 16px;
+    width: 397px;
+    height: 38px;
+    background: #0d6efd;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.form-link {
+    font-size: 12px;
+    color: #000;
+    align-items: center;
+    margin-top: 10px;
+    place-items: center;
+    display: block;
+}
+.form-link a {
+    margin-left: 10px;
+    font-size: 12px;
+    text-decoration: underline;
+    text-decoration-skip-ink: none;
+    color: #0d6efd;
+}
