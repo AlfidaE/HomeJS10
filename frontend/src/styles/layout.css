@@ -33,6 +33,7 @@
 .menu-item {
     padding: 0;
     margin-bottom: 4px;
+    margin-left: 20px;
 }
 .menu-category {
 
@@ -173,9 +174,11 @@
 }
 .fw-bold {
     display: flex;
+    margin-left: 20px;
 }
 .profile-section {
     padding: 16px;
+    margin-left: 20px;
 }
 
 

@@ -1,19 +1,10 @@
-// import {Chart, PieController } from "chart.js";
-//
-// Chart.register(PieController);
-
-
-
-
 import {Chart, PieController, ArcElement, Tooltip, Legend} from 'chart.js';
 import flatpickr from "flatpickr";
-// import flatpickr from "flatpickr";
-// import {Russian} from "./ru.js";
+import {Russian} from "flatpickr/dist/l10n/ru";
 
-
-// flatpickr(myElem, {
-//     "locale": Russian // locale for this instance only
-// });
+flatpickr('#startDate', {
+    "locale": Russian // locale for this instance only
+});
 
 // Регистрация компонентов
 Chart.register(PieController, ArcElement, Tooltip, Legend);
@@ -147,24 +138,3 @@ export class Home {
         });
     }
 }
-
-
-// <script>
-//     // Автоматически устанавливаем сегодняшнюю дату в поле "по"
-//     document.getElementById('endDate').valueAsDate = new Date();
-//
-//     // Логика для кнопок периода (например, при выборе "Неделя")
-//     document.getElementById('week').addEventListener('click', function() {
-//     const endDate = new Date();
-//     const startDate = new Date();
-//     startDate.setDate(endDate.getDate() - 7);
-//
-//     document.getElementById('startDate').valueAsDate = startDate;
-//     document.getElementById('endDate').valueAsDate = endDate;
-// });
-//
-//     // Аналогично для других кнопок (today, month, year...)
-// </script>
-
-
-

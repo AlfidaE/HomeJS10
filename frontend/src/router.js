@@ -34,8 +34,7 @@ export class Router {
                     'bootstrap.min.js',
                     'popper.min.js',
                     'chart.umd.min.js',
-                    'flatpickr.min.js',
-                    'l10n/ru.js',
+                    'flatpickr.min.js'
 
                 ],
                 styles: [
