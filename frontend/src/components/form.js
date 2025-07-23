@@ -1,6 +1,4 @@
 export class Form {
-
-
     constructor(page) {
         this.processElement = null;
         this.page = page;
