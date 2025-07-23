@@ -1,6 +1,4 @@
 import {Home} from "./components/home.js";
-import {Login} from "./components/login.js";
-import {SignUp} from "./components/sign-up.js";
 import {Income} from "./components/income.js";
 import {IncomeCreate} from "./components/income-create.js";
 import {IncomeEdit} from "./components/income-edit.js";
@@ -10,6 +8,7 @@ import {ExpensesEdit} from "./components/expenses-edit.js";
 import {IncomeExpenseTable} from "./components/income-expense-table.js";
 import {IncomeExpenseCreate} from "./components/income-expense-create.js";
 import {IncomeExpenseEdit} from "./components/income-expense-edit.js";
+import {Form} from "./components/form.js";
 
 
 export class Router {
@@ -63,7 +62,7 @@ export class Router {
                 filePathTemplate: '/templates/pages/login.html',
                 useLayout: false,
                 load: () => {
-                    new Login();
+                    new Form('login');
                 },
             },
             {
@@ -72,7 +71,7 @@ export class Router {
                 filePathTemplate: '/templates/pages/sign-up.html',
                 useLayout: false,
                 load: () => {
-                    new SignUp();
+                    new Form('signup');
                 }
             },
             {

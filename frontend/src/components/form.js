@@ -1,7 +1,9 @@
-export class Login {
+export class Form {
 
-    constructor() {
+
+    constructor(page) {
         this.processElement = null;
+        this.page = page;
         this.fields = [
             {
                 email: 'email',
@@ -18,6 +20,26 @@ export class Login {
                 valid: false,
             },
         ];
+
+        if (this.page === 'signup') {
+            this.fields.unshift({
+                    name: 'name',
+                    id: 'name',
+                    element: null,
+                    regex: /^[А-ЯЁ][а-яё]*(?:[\s-][А-ЯЁ][а-яё]*)*$/,
+                    valid: false,
+                },
+                {
+                    name: 'lastName',
+                    id: 'last-name',
+                    element: null,
+                    regex: /^[А-ЯЁ][а-яё]+(?:[-\s][А-ЯЁ][а-яё]+)*$/,
+                    valid: false,
+                },
+                {
+
+                });
+        }
 
         const that = this;
         this.fields.forEach(item => {
