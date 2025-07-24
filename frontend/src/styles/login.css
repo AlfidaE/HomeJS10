@@ -1,6 +1,10 @@
 .wrapper-login {
     display: inline-block;
     vertical-align: middle;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 
 }
 .login-title {
@@ -10,6 +14,15 @@
     margin-top: 60px;
     margin-bottom: 20px;
     font-family: "RobotoRegular", sans-serif;
+}
+.error-login {
+    color: red;
+    display: none;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+.is-invalid {
+
 }
 .input-group-text {
     display: flex;
@@ -56,10 +69,6 @@
 }
 .btn-signUp:hover {
     background: #043c88;
-}
-.btn-signUp:disabled {
-    background: #e2dfe7;
-    cursor: not-allowed;
 }
 .form-link-login {
     font-size: 12px;
