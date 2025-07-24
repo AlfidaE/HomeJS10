@@ -1,4 +1,4 @@
-<div class="wrapper">
+<div class="wrapper-sign-up">
     <div class="logo">
         <svg width="176" height="70" viewBox="0 0 176 70" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M17.7585 57V48.2727H23.5369V49.794H19.6037V51.8736H23.1534V53.3949H19.6037V57H17.7585ZM41.0232 48.2727V57H39.1781V48.2727H41.0232ZM64.2411 48.2727V57H62.6473L58.8504 51.5071H58.7865V57H56.9413V48.2727H58.5607L62.3277 53.7614H62.4044V48.2727H64.2411ZM81.6698 57H79.6925L82.7053 48.2727H85.0832L88.0917 57H86.1144L83.9283 50.267H83.8602L81.6698 57ZM81.5462 53.5696H86.2167V55.0099H81.5462V53.5696ZM110.842 48.2727V57H109.248L105.451 51.5071H105.387V57H103.542V48.2727H105.161L108.928 53.7614H109.005V48.2727H110.842ZM134.467 51.3281H132.6C132.566 51.0866 132.496 50.8722 132.391 50.6847C132.286 50.4943 132.151 50.3324 131.987 50.1989C131.822 50.0653 131.631 49.9631 131.415 49.892C131.202 49.821 130.971 49.7855 130.721 49.7855C130.269 49.7855 129.876 49.8977 129.54 50.1222C129.205 50.3437 128.945 50.6676 128.761 51.0938C128.576 51.517 128.484 52.0312 128.484 52.6364C128.484 53.2585 128.576 53.7812 128.761 54.2045C128.948 54.6278 129.21 54.9474 129.545 55.1634C129.88 55.3793 130.268 55.4872 130.708 55.4872C130.955 55.4872 131.184 55.4545 131.394 55.3892C131.607 55.3239 131.796 55.2287 131.961 55.1037C132.126 54.9759 132.262 54.821 132.37 54.6392C132.481 54.4574 132.558 54.25 132.6 54.017L134.467 54.0256C134.418 54.4261 134.298 54.8125 134.104 55.1847C133.914 55.554 133.657 55.8849 133.333 56.1776C133.012 56.4673 132.629 56.6974 132.183 56.8679C131.739 57.0355 131.238 57.1193 130.678 57.1193C129.9 57.1193 129.204 56.9432 128.59 56.5909C127.979 56.2386 127.496 55.7287 127.141 55.0611C126.789 54.3935 126.613 53.5852 126.613 52.6364C126.613 51.6847 126.792 50.875 127.15 50.2074C127.508 49.5398 127.994 49.0312 128.607 48.6818C129.221 48.3295 129.911 48.1534 130.678 48.1534C131.184 48.1534 131.653 48.2244 132.085 48.3665C132.519 48.5085 132.904 48.7159 133.239 48.9886C133.575 49.2585 133.847 49.5895 134.058 49.9815C134.271 50.3736 134.407 50.8224 134.467 51.3281ZM150.19 57V48.2727H156.07V49.794H152.035V51.8736H155.768V53.3949H152.035V55.4787H156.087V57H150.19Z"
@@ -8,6 +8,8 @@
         </svg>
     </div>
     <h2 class="sign-up-title">Создайте аккаунт</h2>
+    <div id="common-error" class="error-sign-up">Не удалось зарегистрировать пользователя. Обратитесь в поддержку.</div>
+
     <form>
         <div class="input-group">
             <div class="input-group-name ig">
@@ -24,9 +26,11 @@
                             </clipPath>
                         </defs>
                     </svg>
-                    <input type="text" class="form-control" placeholder="Имя">
+                    <input type="text" class="form-control" placeholder="Имя" id="name">
                 </div>
             </div>
+
+            <span id="name-error" class="error is-invalid">Заполните имя</span>
 
             <div class="input-group-last-name ig">
                 <div class="input-group-text">
@@ -42,9 +46,12 @@
                             </clipPath>
                         </defs>
                     </svg>
-                    <input type="text" class="form-control" placeholder="Фамилия">
+                    <input type="text" class="form-control" placeholder="Фамилия" id="last-name">
                 </div>
             </div>
+
+            <span id="last-name-error" class="error is-invalid">Заполните фамилию</span>
+
 
             <div class="input-group-email ig">
                 <div class="input-group-text">
@@ -63,9 +70,12 @@
                             </clipPath>
                         </defs>
                     </svg>
-                    <input type="email" class="form-control" placeholder="Электронная почта">
+                    <input type="email" class="form-control" placeholder="Электронная почта"  id="email">
                 </div>
             </div>
+
+            <span id="email-error" class="error is-invalid">Введите корректный E-mail</span>
+
 
             <div class="input-group-password ig">
                 <div class="input-group-text">
@@ -84,9 +94,12 @@
                             </clipPath>
                         </defs>
                     </svg>
-                    <input type="password" class="form-control" placeholder="Пароль">
+                    <input type="password" class="form-control" placeholder="Пароль" id="password">
                 </div>
             </div>
+
+            <span id="password-error" class="error is-invalid">Заполните пароль</span>
+
 
             <div class="input-group-repeat-password ig">
                 <div class="input-group-text">
@@ -102,13 +115,16 @@
                             </clipPath>
                         </defs>
                     </svg>
-                    <input type="password" class="form-control" placeholder="Подтверждение пароля">
+                    <input type="password" class="form-control" placeholder="Подтверждение пароля" id="password-repeat">
                 </div>
             </div>
 
+            <span id="password-repeat-error" class="error is-invalid">Пароль и повторение пароля должны совпадать</span>
+
+
         </div>
 
-        <button type="button" class="btn btn-signUp" id="process">Войти</button>
+        <button type="button" class="btn btn-signUp" id="process-button">Войти</button>
 
         <div class="form-link-signUp">Уже есть аккаунт?<a href="/login"> Войдите в систему</a></div>
     </form>

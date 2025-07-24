@@ -1,6 +1,10 @@
-.wrapper {
+.wrapper-sign-up {
     display: inline-block;
     vertical-align: middle;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 
 }
 .sign-up-title {
@@ -11,6 +15,21 @@
     margin-bottom: 20px;
     font-family: 'RobotoRegular', sans-serif;
 }
+.error-sign-up {
+    color: #bd0505;
+    margin-bottom: 20px;
+    font-size: 16px;
+    max-width: 400px;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: 5px;
+    display: flex;
+    margin-bottom: 8px;
+}
+
 .input-group-text {
     display: flex;
     align-items: center;

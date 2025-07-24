@@ -8,7 +8,8 @@ import {ExpensesEdit} from "./components/expenses-edit.js";
 import {IncomeExpenseTable} from "./components/income-expense-table.js";
 import {IncomeExpenseCreate} from "./components/income-expense-create.js";
 import {IncomeExpenseEdit} from "./components/income-expense-edit.js";
-import {Form} from "./components/form.js";
+import {Login} from "./components/login.js";
+import {SignUp} from "./components/sign-up";
 
 
 export class Router {
@@ -16,10 +17,7 @@ export class Router {
         this.titlePageElement = document.getElementById('title');
         this.contentPageElement = document.getElementById('content');
         this.stylesLinkElement = document.getElementById('styles-link');
-
-
-        window.addEventListener('DOMContentLoaded', this.activateRoute.bind(this));
-        window.addEventListener('popstate', this.activateRoute.bind(this));
+        this.initEvents();
         this.routes = [
             {
                 route: '/',
@@ -62,7 +60,8 @@ export class Router {
                 filePathTemplate: '/templates/pages/login.html',
                 useLayout: false,
                 load: () => {
-                    new Form('login');
+                    // document.body.style.display = 'flex';
+                    new Login(this.openNewRoute.bind(this));
                 },
             },
             {
@@ -71,7 +70,8 @@ export class Router {
                 filePathTemplate: '/templates/pages/sign-up.html',
                 useLayout: false,
                 load: () => {
-                    new Form('signup');
+                    // document.body.style.display = 'flex';
+                    new SignUp(this.openNewRoute.bind(this));
                 }
             },
             {
@@ -226,8 +226,53 @@ export class Router {
         ]
     }
 
+    initEvents() {
+        window.addEventListener('DOMContentLoaded', this.activateRoute.bind(this));
+        window.addEventListener('popstate', this.activateRoute.bind(this));
+        // document.addEventListener('click', this.openNewRoute.bind(this));
+        document.addEventListener('click', this.clickHandler.bind(this));
+
+    }
+// функция, которая обрабатывает клик по ссылке
+
+    async openNewRoute(url) {
+        const currentRoute = window.location.pathname;
+        history.pushState({}, '', url);
+        await this.activateRoute(null, currentRoute);
+    }
+
+    async clickHandler(e) {
+        let element = null;
+        if (e.target.nodeName === 'A') {
+            element = e.target;
+        } else if (e.target.parentNode.nodeName === 'A') {
+            element = e.target.parentNode;
+        }
+
+        if (element) {
+            e.preventDefault();
+
+            const url = element.href.replace(window.location.origin, '');
+            if (!url || url === '/#' || url.startsWith('javascript:void(0)')) {
+                return;
+            }
+
+            await this.openNewRoute(url);
+        }
+    }
 
     async activateRoute() {
+        // if (oldRoute) {
+        //     const currentRoute = this.routes.find(item => item.route === oldRoute);
+        //     if (currentRoute.styles && currentRoute.styles.length > 0) {
+        //         currentRoute.styles.forEach(style => {
+        //             document.querySelector(`link[href='/css/${style}']`).remove();
+        //         });
+        //     }
+        //     if (currentRoute.unload && typeof currentRoute.unload === 'function') {
+        //         currentRoute.unload();
+        //     }
+        // }
         const urlRoute = window.location.pathname;
         const newRoute = this.routes.find(item => item.route === urlRoute);
 
@@ -255,7 +300,6 @@ export class Router {
                 }
 
                 if (newRoute.filePathTemplate) {
-
                     let contentBlock = this.contentPageElement;
                     if (newRoute.useLayout) {
                         this.contentPageElement.innerHTML = await fetch(newRoute.useLayout).then(response => response.text());
@@ -270,8 +314,9 @@ export class Router {
                 }
 
             } else {
-                console.log('No route found')
-                window.location = '/404';
+                console.log('No route found');
+                history.pushState({}, '', '/404');
+                await this.activateRoute();
             }
 
         }
