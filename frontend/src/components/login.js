@@ -2,6 +2,10 @@ export class Login {
     constructor(openNewRoute) {
         this.openNewRoute = openNewRoute;
 
+        // if (localStorage.getItem('accessToken')) {
+        //     return this.openNewRoute('/')
+        // }
+
         this.emailElement = document.getElementById('email');
         this.passwordElement = document.getElementById('password');
         this.rememberMeElement = document.getElementById('remember-me');
@@ -65,14 +69,13 @@ export class Login {
             });
 
             const result = await response.json();
-            if (result.error ||
-                !result.tokens ||
-                !result.tokens.accessToken ||
-                !result.tokens.refreshToken ||
-                !result.user ||
-                !result.user.id ||
-                !result.user.lastName ||
-                !result.user.name) {
+            if (!result ||
+                result.error ||
+                !result.tokens?.accessToken ||
+                !result.tokens?.refreshToken ||
+                !result.user?.id ||
+                !result.user?.name ||
+                !result.user?.lastName) {
                 this.commonErrorLoginElement.style.display = 'block';
                 return;
             }

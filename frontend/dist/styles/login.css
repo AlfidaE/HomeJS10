@@ -21,9 +21,9 @@
     margin-bottom: 20px;
     font-size: 14px;
 }
-.is-invalid {
-
-}
+/*.input-group-text.invalid {*/
+/*    border-color: red !important;*/
+/*}*/
 .input-group-text {
     display: flex;
     align-items: center;

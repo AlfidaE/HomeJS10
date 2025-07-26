@@ -29,7 +29,9 @@
     display: flex;
     margin-bottom: 8px;
 }
-
+.input-group-text.invalid {
+    border-color: red !important;
+}
 .input-group-text {
     display: flex;
     align-items: center;
