@@ -21,6 +21,7 @@ export class Router {
         this.titlePageElement = document.getElementById('title');
         this.contentPageElement = document.getElementById('content');
         this.stylesLinkElement = document.getElementById('styles-link');
+        this.userName = null;
 
         this.initEvents();
 
@@ -268,12 +269,16 @@ export class Router {
                             this.profileNameElement = document.getElementById('profile-name');
                         console.log(this.profileNameElement)
 
-                        if (this.profileNameElement.innerText === '') {
-                            const userInfo = JSON.parse(AuthUtils.getUserInfo(AuthUtils.userInfoTokenKey));
-
-                                this.profileNameElement.innerText = `${userInfo.name} ${userInfo.lastName}`;
-
+                        if (!this.userName) {
+                            let userInfo = AuthUtils.getUserInfo(AuthUtils.userInfoTokenKey);
+                            if (userInfo) {
+                                userInfo = JSON.parse(userInfo);
+                                if (userInfo.name) {
+                                    this.userName = `${userInfo.name} ${userInfo.lastName}`;
+                                }
+                            }
                         }
+                        this.profileNameElement.innerText = this.userName;
 
 
                     }
