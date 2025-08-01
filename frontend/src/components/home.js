@@ -2,6 +2,7 @@ import {Chart, PieController, ArcElement, Tooltip, Legend} from 'chart.js';
 import flatpickr from "flatpickr";
 import {Russian} from "flatpickr/dist/l10n/ru";
 
+
 flatpickr('#startDate', {
     "locale": Russian // locale for this instance only
 });

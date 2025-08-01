@@ -1,10 +1,12 @@
+import {AuthUtils} from "../utils/auth-utils.js";
+
 export class SignUp {
     constructor(openNewRoute) {
         this.openNewRoute = openNewRoute;
-        //
-        // if (localStorage.getItem('accessToken')) {
-        //     return this.openNewRoute('/')
-        // }
+
+        if (localStorage.getItem('accessToken')) {
+            return this.openNewRoute('/')
+        }
 
         // Получаем элементы формы
         this.nameElement = document.getElementById('name');
@@ -145,16 +147,13 @@ export class SignUp {
                        this.commonErrorElement.style.display = 'block';
                     return;
                 }
-
-
-
-                // сохранение данных
-                localStorage.setItem('userInfo', JSON.stringify({
+                AuthUtils.setTokens(result.accessToken, result.refreshToken);
+                AuthUtils.setAuthInfo(result.tokens.accessToken, result.tokens.refreshToken,{
                     id: result.user.id,
                     name: result.user.name,
                     lastName: result.user.lastName,
                     email: this.emailElement.value.trim()
-                }));
+                });
 
                 this.openNewRoute('/');
 

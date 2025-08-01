@@ -191,7 +191,7 @@
     width: 100%;
     text-align: left;
 }
-strong {
+#profile-name {
     font-size: 14px;
     line-height: 171%;
     color: #052c65;

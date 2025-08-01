@@ -1,10 +1,12 @@
+import {AuthUtils} from "../utils/auth-utils.js";
+
 export class Login {
     constructor(openNewRoute) {
         this.openNewRoute = openNewRoute;
 
-        // if (localStorage.getItem('accessToken')) {
-        //     return this.openNewRoute('/')
-        // }
+        if (localStorage.getItem('accessToken')) {
+            return this.openNewRoute('/')
+        }
 
         this.emailElement = document.getElementById('email');
         this.passwordElement = document.getElementById('password');
@@ -80,136 +82,14 @@ export class Login {
                 return;
             }
 
-            localStorage.setItem('accessToken', result.accessToken);
-            localStorage.setItem('refreshToken', result.refreshToken);
-            localStorage.setItem('userInfo', JSON.stringify({
-                name: result.name,
-                lastName: result.lastName,
-                id: result.id}));
+            AuthUtils.setAuthInfo(result.tokens.accessToken, result.tokens.refreshToken, {
+                name: result.user.name,
+                lastName: result.user.lastName,
+                id: result.id})
+
 
             this.openNewRoute('/');
         }
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// export class Login {
-//     constructor(openNewRoute) {
-//         this.processElement = null;
-//
-//         this.commonErrorElement = document.getElementById('common-error-login');
-//         this.fields = [
-//             {
-//                 email: 'email',
-//                 id: 'email',
-//                 element: null,
-//                 regex: /^[a-zA-Z0-9_.±]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/,
-//                 valid: false,
-//             },
-//             {
-//                 password: 'password',
-//                 id: 'password',
-//                 element: null,
-//                 regex: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
-//                 valid: false,
-//             },
-//         ];
-//
-//         // if (this.page === 'signup') {
-//         //     this.fields.unshift({
-//         //             name: 'name',
-//         //             id: 'name',
-//         //             element: null,
-//         //             regex: /^[А-ЯЁ][а-яё]*(?:[\s-][А-ЯЁ][а-яё]*)*$/,
-//         //             valid: false,
-//         //         },
-//         //         {
-//         //             name: 'lastName',
-//         //             id: 'last-name',
-//         //             element: null,
-//         //             regex: /^[А-ЯЁ][а-яё]+(?:[-\s][А-ЯЁ][а-яё]+)*$/,
-//         //             valid: false,
-//         //         },
-//         //         {
-//         //
-//         //         });
-//         // }
-//
-//         const that = this;
-//         this.fields.forEach(item => {
-//             item.element = document.getElementById(item.id);
-//             item.element.onchange = function () {
-//                 that.validateField.call(that, item, this);
-//             }
-//         });
-//
-//         this.processElement = document.getElementById('process');
-//         this.processElement.onclick = function () {
-//             that.processForm();
-//         }
-//     };
-//
-//
-//     validateField(field, element) {
-//         this.commonErrorElement.style.display = 'none';
-//         if (!element.value || !element.value.match(field.regex)) {
-//             element.parentNode.style.borderColor = 'red';
-//             this.commonErrorElement.style.display = 'block';
-//             field.valid = false;
-//         } else {
-//             element.parentNode.removeAttribute('style');
-//             field.valid = true;
-//         }
-//         this.validateForm();
-//     }
-//
-//     validateForm() {
-//         const validForm = this.fields.every(item => item.valid);
-//         if (validForm) {
-//             this.processElement.removeAttribute('disabled');
-//         } else {
-//             this.processElement.setAttribute('disabled', 'disabled');
-//         }
-//         return validForm;
-//     }
-//
-//     processForm() {
-//         if (this.validateForm()) {
-//             location.href = '/sign-up';
-//         }
-//
-//
-//     }
-// }

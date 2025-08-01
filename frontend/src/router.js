@@ -9,7 +9,11 @@ import {IncomeExpenseTable} from "./components/income-expense-table.js";
 import {IncomeExpenseCreate} from "./components/income-expense-create.js";
 import {IncomeExpenseEdit} from "./components/income-expense-edit.js";
 import {Login} from "./components/login.js";
-import {SignUp} from "./components/sign-up";
+import {SignUp} from "./components/sign-up.js";
+import {Logout} from "./components/logout.js";
+import {AuthUtils} from "./utils/auth-utils.js";
+
+
 
 
 export class Router {
@@ -17,7 +21,9 @@ export class Router {
         this.titlePageElement = document.getElementById('title');
         this.contentPageElement = document.getElementById('content');
         this.stylesLinkElement = document.getElementById('styles-link');
+
         this.initEvents();
+
         this.routes = [
             {
                 route: '/',
@@ -28,15 +34,12 @@ export class Router {
                     new Home();
                 },
                 scripts: [
-                    'bootstrap.min.js',
-                    'popper.min.js',
-                    'chart.umd.min.js',
-                    'flatpickr.min.js'
+                    'chart.umd.min.js', // круги
+                    'flatpickr.min.js' // календарь
 
                 ],
                 styles: [
-                    'bootstrap.min.css',
-                    'flatpickr.min.css',
+                    'flatpickr.min.css', // календарь
                 ]
             },
             {
@@ -44,13 +47,6 @@ export class Router {
                 title: 'Страница не найдена',
                 filePathTemplate: '/templates/404.html',
                 useLayout: false,
-                scripts: [
-                    'bootstrap.min.js',
-
-                ],
-                styles: [
-                    'bootstrap.min.css'
-                ]
             },
 
 
@@ -60,8 +56,8 @@ export class Router {
                 filePathTemplate: '/templates/pages/login.html',
                 useLayout: false,
                 load: () => {
-                    // document.body.style.display = 'flex';
                     new Login(this.openNewRoute.bind(this));
+
                 },
             },
             {
@@ -70,8 +66,13 @@ export class Router {
                 filePathTemplate: '/templates/pages/sign-up.html',
                 useLayout: false,
                 load: () => {
-                    // document.body.style.display = 'flex';
                     new SignUp(this.openNewRoute.bind(this));
+                },
+            },
+            {
+                route: '/logout',
+                load: () => {
+                    new Logout(this.openNewRoute.bind(this));
                 }
             },
             {
@@ -82,13 +83,6 @@ export class Router {
                 load: () => {
                     new Income();
                 },
-                scripts: [
-                    'bootstrap.min.js',
-
-                ],
-                styles: [
-                    'bootstrap.min.css'
-                ]
             },
             {
                 route: '/income-create',
@@ -98,13 +92,6 @@ export class Router {
                 load: () => {
                     new IncomeCreate();
                 },
-                scripts: [
-                    'bootstrap.min.js',
-
-                ],
-                styles: [
-                    'bootstrap.min.css'
-                ]
             },
             {
                 route: '/income-edit',
@@ -114,13 +101,6 @@ export class Router {
                 load: () => {
                     new IncomeEdit();
                 },
-                scripts: [
-                    'bootstrap.min.js',
-
-                ],
-                styles: [
-                    'bootstrap.min.css'
-                ]
             },
             {
                 route: '/expenses',
@@ -130,13 +110,6 @@ export class Router {
                 load: () => {
                     new Expenses();
                 },
-                scripts: [
-                    'bootstrap.min.js',
-
-                ],
-                styles: [
-                    'bootstrap.min.css'
-                ]
             },
             {
                 route: '/expenses-create',
@@ -146,13 +119,6 @@ export class Router {
                 load: () => {
                     new ExpensesCreate();
                 },
-                scripts: [
-                    'bootstrap.min.js',
-
-                ],
-                styles: [
-                    'bootstrap.min.css'
-                ]
             },
             {
                 route: '/expenses-edit',
@@ -162,13 +128,6 @@ export class Router {
                 load: () => {
                     new ExpensesEdit();
                 },
-                scripts: [
-                    'bootstrap.min.js',
-
-                ],
-                styles: [
-                    'bootstrap.min.css'
-                ]
             },
             {
                 route: '/income-expense-table',
@@ -179,17 +138,14 @@ export class Router {
                     new IncomeExpenseTable();
                 },
                 scripts: [
-                    'bootstrap.min.js',
-                    'popper.min.js',
-                    'chart.umd.min.js',
-                    'flatpickr.min.js',
-                    'l10n/ru.js',
+                    'flatpickr.min.js', // календарь
+
 
                 ],
                 styles: [
-                    'bootstrap.min.css',
-                    'flatpickr.min.css',
-                ]
+                    'flatpickr.min.css', // календарь
+                ],
+
             },
             {
                 route: '/income-expense-create',
@@ -199,13 +155,6 @@ export class Router {
                 load: () => {
                     new IncomeExpenseCreate();
                 },
-                scripts: [
-                    'bootstrap.min.js',
-
-                ],
-                styles: [
-                    'bootstrap.min.css'
-                ]
             },
             {
                 route: '/income-expense-edit',
@@ -215,13 +164,6 @@ export class Router {
                 load: () => {
                     new IncomeExpenseEdit();
                 },
-                scripts: [
-                    'bootstrap.min.js',
-
-                ],
-                styles: [
-                    'bootstrap.min.css'
-                ]
             },
         ]
     }
@@ -233,6 +175,7 @@ export class Router {
         document.addEventListener('click', this.clickHandler.bind(this));
 
     }
+
 // функция, которая обрабатывает клик по ссылке
 
     async openNewRoute(url) {
@@ -261,24 +204,39 @@ export class Router {
         }
     }
 
-    async activateRoute() {
-        // if (oldRoute) {
-        //     const currentRoute = this.routes.find(item => item.route === oldRoute);
-        //     if (currentRoute.styles && currentRoute.styles.length > 0) {
-        //         currentRoute.styles.forEach(style => {
-        //             document.querySelector(`link[href='/css/${style}']`).remove();
-        //         });
-        //     }
-        //     if (currentRoute.unload && typeof currentRoute.unload === 'function') {
-        //         currentRoute.unload();
-        //     }
-        // }
+    async activateRoute(e, oldRoute = null) {
+        // Удаляем все календари flatpickr
+        document.querySelectorAll('.flatpickr-calendar').forEach(el => el.remove());
+        if (window.flatpickr) {
+            document.querySelectorAll('.flatpickr-input').forEach(input => {
+                input._flatpickr?.destroy();
+            });
+        }
+
+        if (oldRoute) {
+            const currentRoute = this.routes.find(item => item.route === oldRoute);
+            if (currentRoute.styles && currentRoute.styles.length > 0) {
+                currentRoute.styles.forEach(style => {
+                    document.querySelector(`link[href='/css/${style}']`).remove();
+                });
+            }
+            if (currentRoute.scripts && currentRoute.scripts.length > 0) {
+                currentRoute.scripts.forEach(script => {
+                    document.querySelector(`script[src='/js/${script}']`).remove();
+                });
+            }
+            if (currentRoute.unload && typeof currentRoute.unload === 'function') {
+                currentRoute.unload();
+            }
+        }
+
         const urlRoute = window.location.pathname;
         const newRoute = this.routes.find(item => item.route === urlRoute);
 
         if (newRoute) {
             if (newRoute.styles && newRoute.styles.length > 0) {
                 newRoute.styles.forEach(style => {
+                    // document.querySelector(`link[href='/css/${style}']`)?.remove();
                     const link = document.createElement('link');
                     link.rel = 'stylesheet';
                     link.href = '/css/' + style;
@@ -300,10 +258,24 @@ export class Router {
                 }
 
                 if (newRoute.filePathTemplate) {
+                    document.body.className = '';
                     let contentBlock = this.contentPageElement;
+
                     if (newRoute.useLayout) {
                         this.contentPageElement.innerHTML = await fetch(newRoute.useLayout).then(response => response.text());
                         contentBlock = document.getElementById('content-layout');
+
+                            this.profileNameElement = document.getElementById('profile-name');
+                        console.log(this.profileNameElement)
+
+                        if (this.profileNameElement.innerText === '') {
+                            const userInfo = JSON.parse(AuthUtils.getUserInfo(AuthUtils.userInfoTokenKey));
+
+                                this.profileNameElement.innerText = `${userInfo.name} ${userInfo.lastName}`;
+
+                        }
+
+
                     }
                     contentBlock.innerHTML = await fetch(newRoute.filePathTemplate).then(response => response.text());
 
@@ -319,7 +291,9 @@ export class Router {
                 await this.activateRoute();
             }
 
+
         }
+
         function toggleSubmenu(button) {
             // Находим подменю рядом с кнопкой
             const submenu = button.nextElementSibling;
@@ -334,9 +308,13 @@ export class Router {
 
 // Добавляем обработчики событий для всех кнопок подменю
         document.querySelectorAll('.category-btn').forEach(button => {
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 toggleSubmenu(this);
             });
         });
+
+
+
     }
+
 }
