@@ -147,8 +147,10 @@ export class SignUp {
                        this.commonErrorElement.style.display = 'block';
                     return;
                 }
+
+
                 AuthUtils.setTokens(result.accessToken, result.refreshToken);
-                AuthUtils.setAuthInfo(result.tokens.accessToken, result.tokens.refreshToken,{
+                AuthUtils.setAuthInfo(result.tokens.accessToken, result.tokens.refreshToken, {
                     id: result.user.id,
                     name: result.user.name,
                     lastName: result.user.lastName,
