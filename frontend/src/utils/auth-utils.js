@@ -1,7 +1,34 @@
+import config from "../../config/config.js";
+
 export class AuthUtils {
     static accessTokenKey = 'accessToken';
     static refreshTokenKey = 'refreshToken';
     static userInfoTokenKey = 'userInfo';
+
+    static async processUnauthorizedResponse() {
+        const refreshToken = localStorage.getItem(this.refreshTokenKey);
+        if (refreshToken) {
+            const response = await fetch(config.host + '/refresh', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({refreshToken: refreshToken}),
+            });
+
+            if (response && response.status === 200) {
+                const result = await response.json();
+                if (result && !result.error) {
+                    this.setTokens(result.accessToken, result.refreshToken);
+                    return true;
+                }
+            }
+        }
+        this.removeAuthInfo();
+        location.href = '/login'; // ??? какой здесь должен быть адрес
+        return false;
+    }
 
     static setTokens(accessToken, refreshToken) {
         localStorage.setItem(this.accessTokenKey, accessToken);
@@ -19,7 +46,6 @@ export class AuthUtils {
         localStorage.removeItem(this.accessTokenKey);
         localStorage.removeItem(this.refreshTokenKey);
         localStorage.removeItem(this.userInfoTokenKey);
-
     }
 
        static getUserInfo(key = null) {

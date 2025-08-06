@@ -27,11 +27,13 @@ export class IncomeExpenseTable {
 // Открываем календарь при клике на ссылку "Дата"
         document.getElementById("startDateLink").addEventListener("click", function(e) {
             e.preventDefault();
+            e.stopPropagation();
             startDatePicker.open();
         });
 
         document.getElementById("endDateLink").addEventListener("click", function(e) {
             e.preventDefault();
+            e.stopPropagation();
             endDatePicker.open();
         });
 

@@ -206,6 +206,38 @@ export class Router {
     }
 
     async activateRoute(e, oldRoute = null) {
+
+        // Проверка авторизации для защищенных маршрутов
+        const protectedRoutes = [
+            '/income',
+            '/income-create',
+            '/income-edit',
+            '/expenses',
+            '/expenses-create',
+            '/expenses-edit',
+            '/income-expense-table',
+            '/income-expense-create',
+            '/income-expense-edit'
+        ];
+
+        const currentPath = window.location.pathname;
+        const isAuthRoute = currentPath === '/login' || currentPath === '/sign-up';
+        const isProtectedRoute = protectedRoutes.includes(currentPath);
+        const userInfo = AuthUtils.getUserInfo(AuthUtils.userInfoTokenKey);
+        const accessToken = localStorage.getItem(AuthUtils.accessTokenKey);
+
+        // Если пользователь не авторизован и пытается попасть на защищенный маршрут
+        if ((!userInfo || !accessToken) && isProtectedRoute) {
+            history.pushState({}, '', '/login');
+            return this.activateRoute();
+        }
+
+        // Если пользователь авторизован и пытается попасть на страницу входа/регистрации
+        if ((userInfo && accessToken) && isAuthRoute) {
+            history.pushState({}, '', '/');
+            return this.activateRoute();
+        }
+
         // Удаляем все календари flatpickr
         document.querySelectorAll('.flatpickr-calendar').forEach(el => el.remove());
         if (window.flatpickr) {

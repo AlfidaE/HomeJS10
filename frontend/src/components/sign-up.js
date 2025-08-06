@@ -1,4 +1,6 @@
 import {AuthUtils} from "../utils/auth-utils.js";
+import config from "../../config/config.js";
+import {CustomHttp} from "../utils/custom-http.js";
 
 export class SignUp {
     constructor(openNewRoute) {
@@ -15,6 +17,7 @@ export class SignUp {
         this.passwordElement = document.getElementById('password');
         this.passwordRepeatElement = document.getElementById('password-repeat');
         this.commonErrorElement = document.getElementById('common-error');
+        this.rememberMeElement = document.getElementById('remember-me');
 
 
         // Получаем элементы для сообщений об ошибках
@@ -47,7 +50,6 @@ export class SignUp {
         this.passwordElement.classList.remove('is-invalid');
         this.passwordRepeatElement.classList.remove('is-invalid');
     }
-
 
 
     validateForm() {
@@ -118,48 +120,69 @@ export class SignUp {
     }
 
     async signUp() {
-        // При попытке входа сначала скрываем все ошибки
         this.hideAllErrors();
 
-        if (this.validateForm()) {
-                const response = await fetch('http://localhost:3000/api/signup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-type': 'application/json',
-                        'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        name: this.nameElement.value.trim(),
-                        lastName: this.lastNameElement.value.trim(),
-                        email: this.emailElement.value.trim(),
-                        password: this.passwordElement.value,
-                        passwordRepeat: this.passwordRepeatElement.value
-                    })
-                });
-
-                const result = await response.json();
-
-                if (!result ||
-                    result.error ||
-                    !result.user?.id ||
-                    !result.user?.name ||
-                    !result.user?.lastName) {
-                       this.commonErrorElement.style.display = 'block';
-                    return;
-                }
+        if (!this.validateForm()) {
+            return;
+        }
+        try {
+            const signupResponse = await CustomHttp.request(config.host + '/signup', 'POST', {
+                name: this.nameElement.value.trim(),
+                lastName: this.lastNameElement.value.trim(),
+                email: this.emailElement.value.trim(),
+                password: this.passwordElement.value,
+                passwordRepeat: this.passwordRepeatElement.value
+            });
 
 
-                AuthUtils.setTokens(result.accessToken, result.refreshToken);
-                AuthUtils.setAuthInfo(result.tokens.accessToken, result.tokens.refreshToken, {
-                    id: result.user.id,
-                    name: result.user.name,
-                    lastName: result.user.lastName,
+            if (!signupResponse || signupResponse.error) {
+                throw new Error(signupResponse?.message);
+            }
+
+            const loginResponse = await CustomHttp.request(config.host + '/login', 'POST', {
+                email: this.emailElement.value,
+                password: this.passwordElement.value,
+                rememberMe: this.rememberMeElement.checked
+            });
+
+            if (!loginResponse || !loginResponse.tokens || !loginResponse.tokens.accessToken) {
+                throw new Error(loginResponse?.message);
+            }
+
+            AuthUtils.setAuthInfo(
+                loginResponse.tokens.accessToken,
+                loginResponse.tokens.refreshToken,
+                {
+                    name: loginResponse.user?.name || this.nameElement.value.trim(),
+                    lastName: loginResponse.user?.lastName || this.lastNameElement.value.trim(),
+                    id: loginResponse.user?.id || '',
                     email: this.emailElement.value.trim()
-                });
+                }
+            );
+            this.openNewRoute('/');
 
-                this.openNewRoute('/');
-
+        } catch (error) {
+            this.commonErrorElement.style.display = 'block';
         }
     }
 }
 
+// const result = await response.json();
+//
+// if (!result ||
+//     result.error ||
+//     !result.user?.id ||
+//     !result.user?.name ||
+//     !result.user?.lastName) {
+//        this.commonErrorElement.style.display = 'block';
+//     return;
+// }
+//
+//
+// AuthUtils.setTokens(result.accessToken, result.refreshToken);
+// AuthUtils.setAuthInfo({
+//     id: result.user.id,
+//     name: result.user.name,
+//     lastName: result.user.lastName,
+//     email: this.emailElement.value.trim()
+// });
