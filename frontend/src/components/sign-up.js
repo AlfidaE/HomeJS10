@@ -142,7 +142,7 @@ export class SignUp {
             const loginResponse = await CustomHttp.request(config.host + '/login', 'POST', {
                 email: this.emailElement.value,
                 password: this.passwordElement.value,
-                rememberMe: this.rememberMeElement.checked
+                rememberMe: false
             });
 
             if (!loginResponse || !loginResponse.tokens || !loginResponse.tokens.accessToken) {
