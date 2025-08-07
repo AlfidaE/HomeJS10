@@ -8,10 +8,10 @@
 }
 .wrapper-layout {
     display: flex;
-    /*min-height: 100vh;*/
-    /*position: fixed;*/
-    /*left: 0;*/
-    /*top: 0;*/
+    min-height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
 }
 .sidebar {
     display: flex;
@@ -191,7 +191,7 @@
     width: 100%;
     text-align: left;
 }
-strong {
+#profile-name {
     font-size: 14px;
     line-height: 171%;
     color: #052c65;

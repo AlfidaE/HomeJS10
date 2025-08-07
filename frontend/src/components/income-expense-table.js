@@ -1,8 +1,13 @@
+import flatpickr from "flatpickr";
+import {Russian} from "flatpickr/dist/l10n/ru";
+
+
 export class IncomeExpenseTable {
     constructor() {
-        this.initDate();
+        this.initDateTable();
     }
-    initDate() {
+
+    initDateTable() {
         const startDatePicker = flatpickr("#startDate", {
             locale: "ru",
             dateFormat: "d.m.Y",
@@ -22,11 +27,13 @@ export class IncomeExpenseTable {
 // Открываем календарь при клике на ссылку "Дата"
         document.getElementById("startDateLink").addEventListener("click", function(e) {
             e.preventDefault();
+            e.stopPropagation();
             startDatePicker.open();
         });
 
         document.getElementById("endDateLink").addEventListener("click", function(e) {
             e.preventDefault();
+            e.stopPropagation();
             endDatePicker.open();
         });
 
@@ -40,4 +47,8 @@ export class IncomeExpenseTable {
             endDatePicker.setDate(endDate);
         });
     }
+
 }
+flatpickr('#startDate', {
+    "locale": Russian // locale for this instance only
+});
