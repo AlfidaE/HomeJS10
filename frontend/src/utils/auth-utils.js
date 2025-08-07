@@ -26,7 +26,6 @@ export class AuthUtils {
             }
         }
         this.removeAuthInfo();
-        location.href = '/login'; // ??? какой здесь должен быть адрес
         return false;
     }
 
