@@ -12,6 +12,8 @@ import {Login} from "./components/login.js";
 import {SignUp} from "./components/sign-up.js";
 import {Logout} from "./components/logout.js";
 import {AuthUtils} from "./utils/auth-utils.js";
+import config from "../config/config";
+import {CustomHttp} from "./utils/custom-http";
 
 
 
@@ -205,6 +207,20 @@ export class Router {
         }
     }
 
+
+    async loadBalance() {
+
+        try {
+            const result = await CustomHttp.request(config.host + '/balance');
+            const balanceElement = document.querySelector('.balance-container span');
+            if (balanceElement) {
+                balanceElement.textContent = result?.balance ?? '000'; // это я специально написала, чтобы видеть, что это не с бекэнда
+            }
+        } catch (error) {
+            console.error('Ошибка при загрузке баланса:', error);
+        }
+    }
+
     async activateRoute(e, oldRoute = null) {
 
         // Проверка авторизации для защищенных маршрутов
@@ -312,6 +328,7 @@ export class Router {
                         }
                         this.profileNameElement.innerText = this.userName;
 
+                        this.loadBalance();
 
                     }
                     contentBlock.innerHTML = await fetch(newRoute.filePathTemplate).then(response => response.text());

@@ -1,11 +1,13 @@
 import {AuthUtils} from "../utils/auth-utils.js";
+import {CustomHttp} from "../utils/custom-http.js";
+import config from "../../config/config";
 
 export class Login {
     constructor(openNewRoute) {
         this.openNewRoute = openNewRoute;
 
-        if (localStorage.getItem('accessToken')) {
-            return this.openNewRoute('/')
+        if (localStorage.getItem(AuthUtils.accessTokenKey)) {
+            return this.openNewRoute('/');
         }
 
         this.emailElement = document.getElementById('email');
@@ -57,20 +59,14 @@ export class Login {
 
         if (this.validateForm()) {
 
-            const response = await fetch('http://localhost:3000/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json',
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
+            try {
+                const result = await CustomHttp.request(config.host + '/login', 'POST', {
                     email: this.emailElement.value,
                     password: this.passwordElement.value,
                     rememberMe: this.rememberMeElement.checked
-                })
-            });
+                });
 
-            const result = await response.json();
+
             if (!result ||
                 result.error ||
                 !result.tokens?.accessToken ||
@@ -89,6 +85,10 @@ export class Login {
 
 
             this.openNewRoute('/');
+        } catch (error) {
+                console.error('Login error:', error);
+                this.commonErrorLoginElement.style.display = 'block';
+            }
         }
     }
 

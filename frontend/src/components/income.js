@@ -1,8 +1,12 @@
+import {CustomHttp} from "../utils/custom-http.js";
+import config from "../../config/config.js";
+
 export class Income {
     constructor(openNewRoute) {
         this.openNewRoute = openNewRoute;
-
         this.popup = document.querySelector('.popup-income');
+        this.currentCard = null;
+
         this.setupEvents();
     }
 
@@ -13,13 +17,10 @@ export class Income {
                 e.preventDefault();
                 this.showPopup(e.target.closest('.card-income'));
             }
-
             if (e.target.classList.contains('popup-btn-income-yes')) {
                 await this.deleteCategory();
             }
-
             if (e.target.classList.contains('popup-btn-income-no')) {
-                e.preventDefault();
                 this.hidePopup();
             }
         });
@@ -39,19 +40,19 @@ export class Income {
         if (!this.currentCard) return;
 
         const categoryId = this.currentCard.dataset.id;
-        const token = localStorage.getItem('authToken'); // Получаем токен из localStorage
-
 
         try {
-            const response = await fetch(`http://localhost:3000/api/categories/income/${categoryId}`, {
-                method: 'DELETE'
-            });
+            const response = await CustomHttp.request(config.host + `/categories/income/${categoryId}`,'DELETE');
 
-            this.currentCard.remove();
-            this.hidePopup();
+            if (response && !response.error) {
+                this.currentCard.remove();
+            } else {
+                console.error('Ошибка при удалении:', response.error);
+            }
 
         } catch (error) {
             console.error('Не удалось удалить категорию:', error);
+        } finally {
             this.hidePopup();
         }
     }
