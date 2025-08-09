@@ -6,6 +6,7 @@ export class Income {
         this.openNewRoute = openNewRoute;
         this.popup = document.querySelector('.popup-income');
         this.currentCard = null;
+        this.categories = [];
 
         this.setupEvents();
     }
@@ -17,14 +18,33 @@ export class Income {
                 e.preventDefault();
                 this.showPopup(e.target.closest('.card-income'));
             }
+
+            // Обработка кнопки редактирования
+            if (e.target.classList.contains('card-btn-edit-income')) {
+                e.preventDefault();
+                this.handleEditClick(e.target);
+            }
+            // кнопки попапа
             if (e.target.classList.contains('popup-btn-income-yes')) {
                 await this.deleteCategory();
             }
             if (e.target.classList.contains('popup-btn-income-no')) {
                 this.hidePopup();
+                e.preventDefault();
+                e.stopPropagation();
             }
         });
     }
+
+    handleEditClick(editButton) {
+        const card = editButton.closest('.card-income');
+        const categoryName = card.querySelector('.card-income-title').textContent;
+        const categoryId = card.dataset.id;
+
+        // Переходим на страницу редактирования с параметрами
+        window.location.href = `/income-edit?name=${encodeURIComponent(categoryName)}&id=${categoryId}`;
+    }
+
 
     showPopup(card) {
         this.currentCard = card;
