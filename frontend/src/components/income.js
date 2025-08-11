@@ -62,7 +62,7 @@ export class Income {
         const categoryId = this.currentCard.dataset.id;
 
         try {
-            const response = await CustomHttp.request(config.host + `/categories/income/${categoryId}`,'DELETE');
+            const response = await CustomHttp.request(config.host + `/categories/income/${categoryId}`,'DELETE', );
 
             if (response && !response.error) {
                 this.currentCard.remove();
