@@ -56,7 +56,7 @@ export class IncomeEdit {
 
             if (response && response.id) {
                 this.updateLocalCategories(newName);
-                this.openNewRoute = '/income';
+                this.openNewRoute('/income');
             } else {
                 throw new Error(response?.error || 'Не удалось сохранить изменения');
             }
