@@ -17,14 +17,17 @@ export class IncomeCreate {
         this.errorElement.style.display = 'none';
         this.errorElement.style.color = '#dc3545';
         this.errorElement.style.marginTop = '10px';
+        this.errorElement.style.marginBottom = '10px';
         this.errorElement.style.fontSize = '14px';
+        this.errorElement.style.textAlign = 'left';
         this.inputElement.parentNode.appendChild(this.errorElement);
     }
     initEvents() {
         // кнопка создать
         this.createButton.addEventListener('click', () => this.createCategory());
         // кнопка отмена
-        this.cancelButton.addEventListener('click', () => {
+        this.cancelButton.addEventListener('click', (e) => {
+            e.preventDefault();
             window.location.href = '/income';
         });
         // валидация при вводе

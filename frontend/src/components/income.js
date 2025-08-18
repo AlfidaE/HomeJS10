@@ -7,27 +7,109 @@ export class Income {
         this.popup = document.querySelector('.popup-income');
         this.currentCard = null;
         this.categories = [];
+        this.cardIncomeContainer = document.querySelector('.cardIncome');
+        this.addButton = this.cardIncomeContainer.querySelector('.card-add');
 
         this.setupEvents();
+        this.init();
+    }
+
+    async init() {
+        await this.getCategories();
+        this.renderCategories();
+    }
+
+    async getCategories() {
+        try {
+            const response = await CustomHttp.request(config.host + '/categories/income');
+
+            if (response && Array.isArray(response)) {
+                this.categories = response;
+                console.log('Получены категории:', this.categories);
+            } else {
+                console.warn('Ответ сервера не содержит массив категорий:', response);
+                this.categories = [];
+            }
+        } catch (error) {
+            console.error('Ошибка при получении категорий:', error);
+            this.categories = [];
+        }
+    }
+
+    renderCategories() {
+        // Очищаем контейнер, но оставляем кнопку добавления
+        this.cardIncomeContainer.innerHTML = '';
+        if (this.addButton) {
+            this.cardIncomeContainer.appendChild(this.addButton);
+        }
+
+        // Проверяем, есть ли категории для отображения
+        // if (!this.categories || this.categories.length === 0) {
+        //     const emptyMessage = document.createElement('div');
+        //     emptyMessage.className = 'empty-message';
+        //     emptyMessage.textContent = 'Нет категорий доходов';
+        //     this.cardIncomeContainer.insertBefore(emptyMessage, this.addButton);
+        //     return;
+        // }
+
+        // Создаем карточки для каждой категории
+        this.categories.forEach(category => {
+            const card = this.createCategoryCard(category);
+            this.cardIncomeContainer.insertBefore(card, this.addButton);
+        });
+    }
+
+    createCategoryCard(category) {
+        const card = document.createElement('div');
+        card.className = `card-${category.title.toLowerCase().replace(/\s+/g, '-')} card-income`;
+        card.dataset.id = category.id;
+
+        const cardTitle = document.createElement('div');
+        cardTitle.className = 'card-title card-income-title';
+        cardTitle.textContent = category.title;
+
+        const cardButtons = document.createElement('div');
+        cardButtons.className = 'cardIncome-btn';
+
+        const editLink = document.createElement('a');
+        editLink.href = `/income-edit?id=${category.id}`;
+        editLink.className = 'card-btn-edit-income';
+        editLink.id = `card-${category.title.toLowerCase().replace(/\s+/g, '-')}-btn-edit`;
+        editLink.dataset.id = category.id;
+        editLink.dataset.name = category.title;
+        editLink.textContent = 'Редактировать';
+
+        const removeButton = document.createElement('button');
+        removeButton.className = 'card-btn-remove-income';
+        removeButton.id = `card-${category.title.toLowerCase().replace(/\s+/g, '-')}-btn-remove`;
+        removeButton.dataset.id = category.id;
+        removeButton.textContent = 'Удалить';
+
+        cardButtons.appendChild(editLink);
+        cardButtons.appendChild(removeButton);
+
+        card.appendChild(cardTitle);
+        card.appendChild(cardButtons);
+
+        return card;
     }
 
     setupEvents() {
-        // Обработчик для всех кнопок удаления
         document.addEventListener('click', async (e) => {
             if (e.target.classList.contains('card-btn-remove-income')) {
                 e.preventDefault();
                 this.showPopup(e.target.closest('.card-income'));
             }
 
-            // Обработка кнопки редактирования
             if (e.target.classList.contains('card-btn-edit-income')) {
                 e.preventDefault();
                 this.handleEditClick(e.target);
             }
-            // кнопки попапа
+
             if (e.target.classList.contains('popup-btn-income-yes')) {
                 await this.deleteCategory();
             }
+
             if (e.target.classList.contains('popup-btn-income-no')) {
                 this.hidePopup();
                 e.preventDefault();
@@ -40,11 +122,8 @@ export class Income {
         const card = editButton.closest('.card-income');
         const categoryName = card.querySelector('.card-income-title').textContent;
         const categoryId = card.dataset.id;
-
-        // Переходим на страницу редактирования с параметрами
-        window.location.href = `/income-edit?name=${encodeURIComponent(categoryName)}&id=${categoryId}`;
+        window.location.href = (`/income-edit?name=${encodeURIComponent(categoryName)}&id=${categoryId}`);
     }
-
 
     showPopup(card) {
         this.currentCard = card;
@@ -62,14 +141,16 @@ export class Income {
         const categoryId = this.currentCard.dataset.id;
 
         try {
-            const response = await CustomHttp.request(config.host + `/categories/income/${categoryId}`,'DELETE', );
+            const response = await CustomHttp.request(config.host + `/categories/income/${categoryId}`, 'DELETE');
 
             if (response && !response.error) {
                 this.currentCard.remove();
+                // Обновляем список категорий после удаления
+                await this.getCategories();
+                this.renderCategories();
             } else {
                 console.error('Ошибка при удалении:', response.error);
             }
-
         } catch (error) {
             console.error('Не удалось удалить категорию:', error);
         } finally {
