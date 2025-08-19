@@ -28,7 +28,8 @@ export class IncomeCreate {
         // кнопка отмена
         this.cancelButton.addEventListener('click', (e) => {
             e.preventDefault();
-            window.location.href = '/income';
+            this.openNewRoute('/income');
+
         });
         // валидация при вводе
         this.inputElement.addEventListener('input', () => {
@@ -67,7 +68,7 @@ export class IncomeCreate {
             );
             if (response && typeof response.id === 'number' && response.title) {
                 this.updateLocalCategories(response);
-                window.location.href = '/income';
+                this.openNewRoute('/income');
             } else {
                 throw new Error('упс, ошибка');
             }

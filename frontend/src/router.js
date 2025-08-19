@@ -12,8 +12,8 @@ import {Login} from "./components/login.js";
 import {SignUp} from "./components/sign-up.js";
 import {Logout} from "./components/logout.js";
 import {AuthUtils} from "./utils/auth-utils.js";
-import config from "../config/config";
-import {CustomHttp} from "./utils/custom-http";
+import config from "../config/config.js";
+import {CustomHttp} from "./utils/custom-http.js";
 
 
 
@@ -111,7 +111,7 @@ export class Router {
                 filePathTemplate: '/templates/pages/expenses.html',
                 useLayout: '/templates/layout.html',
                 load: () => {
-                    new Expenses();
+                    new Expenses(this.openNewRoute.bind(this));
                 },
             },
             {
@@ -120,7 +120,7 @@ export class Router {
                 filePathTemplate: '/templates/pages/expenses-create.html',
                 useLayout: '/templates/layout.html',
                 load: () => {
-                    new ExpensesCreate();
+                    new ExpensesCreate(this.openNewRoute.bind(this));
                 },
             },
             {
@@ -129,7 +129,7 @@ export class Router {
                 filePathTemplate: '/templates/pages/expenses-edit.html',
                 useLayout: '/templates/layout.html',
                 load: () => {
-                    new ExpensesEdit();
+                    new ExpensesEdit(this.openNewRoute.bind(this));
                 },
             },
             {
@@ -328,7 +328,7 @@ export class Router {
                         }
                         this.profileNameElement.innerText = this.userName;
 
-                        this.loadBalance();
+                        await this.loadBalance();
 
                     }
                     contentBlock.innerHTML = await fetch(newRoute.filePathTemplate).then(response => response.text());

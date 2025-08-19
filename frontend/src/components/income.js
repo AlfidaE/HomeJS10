@@ -122,7 +122,7 @@ export class Income {
         const card = editButton.closest('.card-income');
         const categoryName = card.querySelector('.card-income-title').textContent;
         const categoryId = card.dataset.id;
-        window.location.href = (`/income-edit?name=${encodeURIComponent(categoryName)}&id=${categoryId}`);
+        this.openNewRoute(`/income-edit?name=${encodeURIComponent(categoryName)}&id=${categoryId}`);
     }
 
     showPopup(card) {

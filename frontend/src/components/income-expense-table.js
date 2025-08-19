@@ -125,6 +125,7 @@ export class IncomeExpenseTable {
 
             if (editBtn) {
                 const id = editBtn.dataset.id;
+                // возможно переделать на this.openNewRoute(`/income-expense-edit?id=${id}`);
                 window.location.href = `/income-expense-edit?id=${id}`;
             }
 
