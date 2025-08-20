@@ -138,7 +138,7 @@ export class Router {
                 filePathTemplate: '/templates/pages/income-expense-table.html',
                 useLayout: '/templates/layout.html',
                 load: () => {
-                    new IncomeExpenseTable();
+                    new IncomeExpenseTable(this.openNewRoute.bind(this));
                 },
                 scripts: [
                     'flatpickr.min.js', // календарь
@@ -156,7 +156,7 @@ export class Router {
                 filePathTemplate: '/templates/pages/income-expense-create.html',
                 useLayout: '/templates/layout.html',
                 load: () => {
-                    new IncomeExpenseCreate();
+                    new IncomeExpenseCreate(this.openNewRoute.bind(this));
                 },
             },
             {
@@ -165,7 +165,7 @@ export class Router {
                 filePathTemplate: '/templates/pages/income-expense-edit.html',
                 useLayout: '/templates/layout.html',
                 load: () => {
-                    new IncomeExpenseEdit();
+                    new IncomeExpenseEdit(this.openNewRoute.bind(this));
                 },
             },
         ]

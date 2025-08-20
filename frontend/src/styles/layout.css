@@ -12,6 +12,7 @@
     position: fixed;
     left: 0;
     top: 0;
+    width: 100%;
 }
 .sidebar {
     display: flex;
@@ -179,6 +180,8 @@
 .profile-section {
     padding: 16px;
     margin-left: 20px;
+    flex-wrap: wrap;
+    display: flex;
 }
 
 
@@ -198,6 +201,8 @@
     list-style: none;
     text-decoration: none;
     font-family: RobotoRegular, sans-serif;
+    flex-wrap: wrap;
+    display: flex;
 }
 
 

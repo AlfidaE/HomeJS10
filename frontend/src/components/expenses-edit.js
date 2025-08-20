@@ -96,7 +96,6 @@ export class ExpensesEdit {
             );
 
             if (response && response.id) {
-                this.updateLocalCategories(newName);
                 this.openNewRoute('/expenses');
             } else {
                 throw new Error(response?.error || 'Не удалось сохранить изменения');
@@ -104,21 +103,6 @@ export class ExpensesEdit {
         } catch (error) {
             console.error('Ошибка сохранения:', error);
             this.showError(error.message || 'Ошибка сервера при сохранении');
-        }
-    }
-
-    updateLocalCategories(newName) {
-        try {
-            let categories = JSON.parse(localStorage.getItem('expensesCategories')) || [];
-            categories = categories.map(category => {
-                if (category.id.toString() === this.categoryId) {
-                    return {...category, title: newName};
-                }
-                return category;
-            });
-            localStorage.setItem('expensesCategories', JSON.stringify(categories));
-        } catch (e) {
-            console.warn('Не удалось обновить localStorage', e);
         }
     }
 

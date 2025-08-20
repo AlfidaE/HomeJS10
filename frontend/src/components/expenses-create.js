@@ -84,7 +84,6 @@ export class ExpensesCreate {
             );
 
             if (response && typeof response.id === 'number' && response.title) {
-                this.updateLocalCategories(response);
                 this.openNewRoute('/expenses');
             } else {
                 throw new Error('Ошибка при создании категории');
@@ -94,13 +93,4 @@ export class ExpensesCreate {
         }
     }
 
-    updateLocalCategories(newCategory) {
-        try {
-            const categories = JSON.parse(localStorage.getItem('expensesCategories')) || [];
-            categories.push(newCategory);
-            localStorage.setItem('expensesCategories', JSON.stringify(categories));
-        } catch (e) {
-            console.warn('Не удалось обновить localStorage', e);
-        }
-    }
 }

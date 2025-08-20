@@ -42,6 +42,7 @@ export class IncomeCreate {
         this.errorElement.textContent = message;
         this.errorElement.style.display = 'block';
         this.inputElement.style.borderColor = '#dc3545';
+        this.errorElement.style.textAlign = 'left';
     }
     hideError() {
         this.errorElement.style.display = 'none';
@@ -67,22 +68,12 @@ export class IncomeCreate {
                 }
             );
             if (response && typeof response.id === 'number' && response.title) {
-                this.updateLocalCategories(response);
                 this.openNewRoute('/income');
             } else {
-                throw new Error('упс, ошибка');
+                throw new Error('Ошибка при создании категории');
             }
         } catch (error) {
             this.showError(error.message || 'Ошибка сервера при создании категории');
-        }
-    }
-    updateLocalCategories(newCategory) {
-        try {
-            const categories = JSON.parse(localStorage.getItem('incomeCategories')) || [];
-            categories.push(newCategory);
-            localStorage.setItem('incomeCategories', JSON.stringify(categories));
-        } catch (e) {
-            console.warn('Не удалось обновить localStorage', e);
         }
     }
 

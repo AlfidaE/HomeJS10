@@ -96,7 +96,6 @@ export class IncomeEdit {
             );
 
             if (response && response.id) {
-                this.updateLocalCategories(newName);
                 this.openNewRoute('/income');
             } else {
                 throw new Error(response?.error || 'Не удалось сохранить изменения');
@@ -107,21 +106,6 @@ export class IncomeEdit {
         }
     }
 
-    updateLocalCategories(newName) {
-        try {
-            let categories = JSON.parse(localStorage.getItem('incomeCategories')) || [];
-            categories = categories.map(category => {
-                if (category.id.toString() === this.categoryId) {
-                    return {...category, title: newName};
-                }
-                return category;
-            });
-            localStorage.setItem('incomeCategories', JSON.stringify(categories));
-        } catch (e) {
-            console.warn('Не удалось обновить localStorage', e);
-        }
-    }
-
     showError(message) {
         if (this.errorElement) {
             this.errorElement.textContent = message;
@@ -129,7 +113,7 @@ export class IncomeEdit {
             this.errorElement.style.color = '#dc3545';
             this.errorElement.style.textAlign = 'left';
         } else {
-            console.error('Error element not available:', message);
+            console.error('Ошибка сервера при сохранении:', message);
         }
     }
 }
