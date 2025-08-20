@@ -174,7 +174,6 @@ export class Router {
     initEvents() {
         window.addEventListener('DOMContentLoaded', this.activateRoute.bind(this));
         window.addEventListener('popstate', this.activateRoute.bind(this));
-        // document.addEventListener('click', this.openNewRoute.bind(this));
         document.addEventListener('click', this.clickHandler.bind(this));
 
     }
@@ -214,7 +213,7 @@ export class Router {
             const result = await CustomHttp.request(config.host + '/balance');
             const balanceElement = document.querySelector('.balance-container span');
             if (balanceElement) {
-                balanceElement.textContent = result?.balance ?? '000'; // это я специально написала, чтобы видеть, что это не с бекэнда
+                balanceElement.textContent = result?.balance ?? '';
             }
         } catch (error) {
             console.error('Ошибка при загрузке баланса:', error);

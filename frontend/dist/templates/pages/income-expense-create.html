@@ -12,33 +12,26 @@
         </div>
 
         <div class="input-income-expense-create">
-            <select class="income-expense-create-type">
+            <select class="income-expense-create-type income-expense-create-category">
                 <option value="" disabled selected>Категория...</option>
-                <option value="food">Еда</option>
-                <option value="housing">Жильё</option>
-                <option value="health">Здоровье</option>
-                <option value="cafe">Кафе</option>
-                <option value="auto">Авто</option>
-                <option value="clothes">Одежда</option>
-                <option value="fun">Развлечения</option>
-                <option value="accounts">Счета</option>
-                <option value="sport">Спорт</option>
+
             </select>
         </div>
         <div class="input-income-expense-create">
-            <input type="number" class="form-control" placeholder="Сумма в $...">
+            <input type="number" class="form-control" placeholder="Сумма в $..." min="0" step="0.01">
         </div>
+
         <div class="input-income-expense-create">
             <input type="date" class="form-control" placeholder="Дата...">
         </div>
+
         <div class="input-income-expense-create">
             <input type="text" class="form-control" placeholder="Комментарий...">
         </div>
-        <div class="btn-income-expense-create">
 
+        <div class="btn-income-expense-create">
             <button class="btn-edit-income-expense-create" id="income-expense-create-btn-edit">Создать</button>
-            <a href="/" class="btn-remove-income-expense-create" id="income-expense-create-btn-remove">Отмена</a>
-<!--            <button class="btn-remove-income-expense-create" id="income-expense-create-btn-remove">Отмена</button>-->
+            <button class="btn-remove-income-expense-create" id="income-expense-create-btn-remove">Отмена</button>
         </div>
     </div>
 </section>

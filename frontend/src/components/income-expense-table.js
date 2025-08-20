@@ -3,11 +3,6 @@ import config from "../../config/config.js";
 import flatpickr from "flatpickr";
 import {Russian} from "flatpickr/dist/l10n/ru";
 
-
-flatpickr('#startDate', {
-    "locale": Russian // locale for this instance only
-});
-
 export class IncomeExpenseTable {
     constructor(openNewRoute) {
         this.openNewRoute = openNewRoute;
@@ -17,53 +12,62 @@ export class IncomeExpenseTable {
         this.currentOperationId = null;
 
         this.init();
-        this.initDate();
-    }
-
-    initDate() {
-
-        const startDatePicker = flatpickr("#startDate", {
-            locale: "ru",
-            dateFormat: "d.m.Y",
-            onChange: function(selectedDates, dateStr) {
-                document.getElementById("startDateLink").textContent = dateStr;
-            }
-        });
-
-        const endDatePicker = flatpickr("#endDate", {
-            locale: "ru",
-            dateFormat: "d.m.Y",
-            onChange: function(selectedDates, dateStr) {
-                document.getElementById("endDateLink").textContent = dateStr;
-            }
-        });
-
-// Открываем календарь при клике на ссылку "Дата"
-        document.getElementById("startDateLink").addEventListener("click", function(e) {
-            e.preventDefault();
-            startDatePicker.open();
-        });
-
-        document.getElementById("endDateLink").addEventListener("click", function(e) {
-            e.preventDefault();
-            endDatePicker.open();
-        });
-
-// Пример: Установка периода "Неделя" при клике на кнопку
-        document.getElementById("week").addEventListener("click", function() {
-            const endDate = new Date();
-            const startDate = new Date();
-            startDate.setDate(endDate.getDate() - 7);
-
-            startDatePicker.setDate(startDate);
-            endDatePicker.setDate(endDate);
-        });
+        // this.initDate();
     }
 
     async init() {
         await this.loadOperations();
         this.setupEvents();
     }
+
+    // initDate() {
+    //     const startDateElem = document.getElementById("startDate");
+    //     const startDateLink = document.getElementById("startDateLink");
+    //     const endDateElem = document.getElementById("endDate");
+    //     const endDateLink = document.getElementById("endDateLink");
+    //     const weekBtn = document.getElementById("week");
+    //
+    //     if (!startDateElem || !startDateLink || !endDateElem || !endDateLink || !weekBtn) {
+    //         console.error('Date elements not found');
+    //         return;
+    //     }
+    //
+    //     const startDatePicker = flatpickr(startDateElem, {
+    //         locale: Russian,
+    //         dateFormat: "d.m.Y",
+    //         onChange: function(selectedDates, dateStr) {
+    //             startDateLink.textContent = dateStr;
+    //         }
+    //     });
+    //
+    //     const endDatePicker = flatpickr(endDateElem, {
+    //         locale: Russian,
+    //         dateFormat: "d.m.Y",
+    //         onChange: function(selectedDates, dateStr) {
+    //             endDateLink.textContent = dateStr;
+    //         }
+    //     });
+    //
+    //     startDateLink.addEventListener("click", function(e) {
+    //         e.preventDefault();
+    //         e.stopPropagation();
+    //         startDatePicker.open();
+    //     });
+    //
+    //     endDateLink.addEventListener("click", function(e) {
+    //         e.preventDefault();
+    //         e.stopPropagation();
+    //         endDatePicker.open();
+    //     });
+    //
+    //     weekBtn.addEventListener("click", function() {
+    //         const endDate = new Date();
+    //         const startDate = new Date();
+    //         startDate.setDate(endDate.getDate() - 7);
+    //         startDatePicker.setDate(startDate);
+    //         endDatePicker.setDate(endDate);
+    //     });
+    // }
 
     async loadOperations() {
         try {
@@ -125,7 +129,7 @@ export class IncomeExpenseTable {
             const actionsCell = trElement.insertCell();
             actionsCell.innerHTML = `
                 <div class="operation-actions">
-                <button class="btn-delete-operation" data-id="${operation.id}">
+                    <button class="btn-delete-operation" data-id="${operation.id}">
                         <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M4.5 5.5C4.77614 5.5 5 5.72386 5 6V12C5 12.2761 4.77614 12.5 4.5 12.5C4.22386 12.5 4 12.2761 4 12V6C4 5.72386 4.22386 5.5 4.5 5.5Z" fill="black"/>
                             <path d="M7 5.5C7.27614 5.5 7.5 5.72386 7.5 6V12C7.5 12.2761 7.27614 12.5 7 12.5C6.72386 12.5 6.5 12.2761 6.5 12V6C6.5 5.72386 6.72386 5.5 7 5.5Z" fill="black"/>
@@ -158,7 +162,16 @@ export class IncomeExpenseTable {
     }
 
     setupEvents() {
-        // Обработчики для кнопок удаления
+        // Обработчики для кнопок создания дохода/расхода
+        document.getElementById('income-expense-table-btn-edit')?.addEventListener('click', () => {
+            this.openNewRoute('/income-expense-create?type=income');
+        });
+
+        document.getElementById('income-expense-table-btn-remove')?.addEventListener('click', () => {
+            this.openNewRoute('/income-expense-create?type=expense');
+        });
+
+        // Обработчики для кнопок удаления и редактирования операций
         document.addEventListener('click', (e) => {
             if (e.target.closest('.btn-delete-operation')) {
                 const button = e.target.closest('.btn-delete-operation');
@@ -230,6 +243,7 @@ export class IncomeExpenseTable {
     editOperation(operationId) {
         const operation = this.operations.find(op => op.id === parseInt(operationId));
         if (operation) {
-            this.openNewRoute(`/income-expense-edit?id=${operationId}&type=${operation.type}`);        }
+            this.openNewRoute(`/income-expense-edit?id=${operationId}&type=${operation.type}`);
+        }
     }
 }

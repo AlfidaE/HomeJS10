@@ -56,9 +56,17 @@
     cursor: pointer;
     place-items: center;
     display: flex;
+    text-decoration: none;
 }
 
-
+.error-message-income-edit {
+    color: #b80a0a;
+    /*display: none;*/
+    display: flex;
+    margin-bottom: 20px;
+    margin-top: 5px;
+    font-size: 15px;
+}
 
 
 

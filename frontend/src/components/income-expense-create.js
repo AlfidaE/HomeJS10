@@ -12,10 +12,14 @@ export class IncomeExpenseCreate {
         this.handleCancel = this.handleCancel.bind(this);
         this.handleTypeChange = this.handleTypeChange.bind(this);
         this.hideError = this.hideError.bind(this);
+        this.handleInputFocus = this.handleInputFocus.bind(this);
+        this.handleInputBlur = this.handleInputBlur.bind(this);
+        this.handleSelectChange = this.handleSelectChange.bind(this);
 
         this.initElements();
         this.initEvents();
         this.loadCategories();
+        this.initInputStyles(); // Инициализация стилей
     }
 
     initElements() {
@@ -44,6 +48,25 @@ export class IncomeExpenseCreate {
         if (this.dateInput) {
             this.dateInput.value = new Date().toISOString().split('T')[0];
         }
+    }
+
+    // Новый метод для инициализации стилей input
+    initInputStyles() {
+        const inputs = [this.amountInput, this.dateInput, this.commentInput].filter(Boolean);
+        const selects = [this.typeSelect, this.categorySelect].filter(Boolean);
+
+        // Устанавливаем начальный цвет для placeholder
+        inputs.forEach(input => {
+            if (input && !input.value) {
+                input.style.color = '#6C757D'; // Серый цвет для placeholder
+            }
+        });
+
+        selects.forEach(select => {
+            if (select && !select.value) {
+                select.style.color = '#6C757D'; // Серый цвет для placeholder
+            }
+        });
     }
 
     async loadCategories() {
@@ -81,6 +104,7 @@ export class IncomeExpenseCreate {
         Array.from(this.typeSelect.options).forEach(option => {
             if (option.value === this.operationType) {
                 option.selected = true;
+                this.typeSelect.style.color = '#000000'; // Черный цвет при выборе
             }
         });
 
@@ -93,13 +117,51 @@ export class IncomeExpenseCreate {
         if (!this.typeSelect || !this.createButton || !this.cancelButton) return;
 
         this.typeSelect.addEventListener('change', this.handleTypeChange);
+        this.typeSelect.addEventListener('change', this.handleSelectChange);
+        this.categorySelect.addEventListener('change', this.handleSelectChange);
+
         this.createButton.addEventListener('click', this.createOperation);
         this.cancelButton.addEventListener('click', this.handleCancel);
+
+        // Обработчики для input
+        const inputs = [this.amountInput, this.dateInput, this.commentInput].filter(Boolean);
+        inputs.forEach(input => {
+            input.addEventListener('focus', this.handleInputFocus);
+            input.addEventListener('blur', this.handleInputBlur);
+            input.addEventListener('input', this.handleInputChange);
+        });
 
         const validationElements = [this.amountInput, this.dateInput, this.categorySelect].filter(Boolean);
         validationElements.forEach(element => {
             element.addEventListener('input', this.hideError);
         });
+    }
+
+    // Новые методы для обработки стилей
+    handleInputFocus(e) {
+        e.target.style.color = '#000000'; // Черный цвет при фокусе
+    }
+
+    handleInputBlur(e) {
+        if (!e.target.value) {
+            e.target.style.color = '#6C757D'; // Серый цвет если пусто
+        } else {
+            e.target.style.color = '#000000'; // Черный цвет если есть значение
+        }
+    }
+
+    handleInputChange(e) {
+        if (e.target.value) {
+            e.target.style.color = '#000000'; // Черный цвет при вводе
+        }
+    }
+
+    handleSelectChange(e) {
+        if (e.target.value) {
+            e.target.style.color = '#000000'; // Черный цвет при выборе
+        } else {
+            e.target.style.color = '#6C757D'; // Серый цвет если не выбрано
+        }
     }
 
     handleTypeChange() {
@@ -189,7 +251,7 @@ export class IncomeExpenseCreate {
                 amount: parseFloat(this.amountInput.value),
                 date: this.dateInput.value,
                 comment: this.commentInput ? this.commentInput.value.trim() : '',
-                // category: selectedCategory ? selectedCategory.title : '',
+                category: selectedCategory ? selectedCategory.title : '',
                 category_id: parseInt(this.categorySelect.value)
             };
 
@@ -219,7 +281,6 @@ export class IncomeExpenseCreate {
     }
 
     getErrorMessage(error) {
-        // Более детальные сообщения об ошибках
         if (error.message.includes('401') || error.message.includes('Unauthorized')) {
             return 'Ошибка авторизации. Пожалуйста, войдите снова.';
         } else if (error.message.includes('404')) {

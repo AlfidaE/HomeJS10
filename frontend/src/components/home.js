@@ -3,9 +3,7 @@ import flatpickr from "flatpickr";
 import {Russian} from "flatpickr/dist/l10n/ru";
 
 
-flatpickr('#startDate', {
-    "locale": Russian // locale for this instance only
-});
+
 
 // Регистрация компонентов
 Chart.register(PieController, ArcElement, Tooltip, Legend);
@@ -100,6 +98,10 @@ export class Home {
     }
 
     initDate() {
+        flatpickr('#startDate', {
+            "locale": Russian // locale for this instance only
+        });
+
 
         const startDatePicker = flatpickr("#startDate", {
             locale: "ru",

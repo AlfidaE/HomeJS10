@@ -1,20 +1,14 @@
-.wrapper-income-expense-table {
-}
-
 .wrapper-income-expense-table h1 {
     font-size: 40px;
     color: #052c65;
     margin: 0 0 40px 0;
     display: flex;
 }
-
-
 .btn-income-expense-table {
     display: flex;
     margin-top: 40px;
     margin-bottom: 40px;
 }
-
 .btn-edit-income-expense-table {
     border-radius: 5px;
     width: 130px;
@@ -31,7 +25,6 @@
     justify-content: center;
     align-items: center;
 }
-
 .btn-remove-income-expense-table {
     border-radius: 5px;
     width: 137px;
@@ -80,7 +73,6 @@
     color: #000;
     margin-right: 9px;
 }
-
 .date-link {
     font-size: 16px;
     letter-spacing: 0.03em;
@@ -99,7 +91,22 @@
     width: 0;
     height: 0;
 }
-
+.table {
+    max-width: 1101px;
+    border-top: 1px solid #DEE2E6;
+}
+.table>:not(caption)>*>* {
+    padding: 15px 0;
+}
+.table th {
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    color: #052c65;
+}
+.btn-delete-operation, .btn-edit-operation {
+    background: transparent;
+    border: none;
+}
 .popup-income-expense-table {
     border: 1px solid #ced4da;
     border-radius: 12px;

@@ -43,15 +43,6 @@ export class Expenses {
             this.cardExpensesContainer.appendChild(this.addButton);
         }
 
-        // Проверяем, есть ли категории для отображения
-        // if (!this.categories || this.categories.length === 0) {
-        //     const emptyMessage = document.createElement('div');
-        //     emptyMessage.className = 'empty-message';
-        //     emptyMessage.textContent = 'Нет категорий расходов';
-        //     this.cardExpensesContainer.insertBefore(emptyMessage, this.addButton);
-        //     return;
-        // }
-
         // Создаем карточки для каждой категории
         this.categories.forEach(category => {
             const card = this.createCategoryCard(category);
@@ -71,13 +62,13 @@ export class Expenses {
         const cardButtons = document.createElement('div');
         cardButtons.className = 'cardExpenses-btn';
 
-        const editLink = document.createElement('a');
-        editLink.href = `/expenses-edit?id=${category.id}`;
-        editLink.className = 'card-btn-edit-expenses';
-        editLink.id = `card-${category.title.toLowerCase().replace(/\s+/g, '-')}-btn-edit`;
-        editLink.dataset.id = category.id;
-        editLink.dataset.name = category.title;
-        editLink.textContent = 'Редактировать';
+        // Изменено: кнопка вместо ссылки для редактирования
+        const editButton = document.createElement('button');
+        editButton.className = 'card-btn-edit-expenses';
+        editButton.id = `card-${category.title.toLowerCase().replace(/\s+/g, '-')}-btn-edit`;
+        editButton.dataset.id = category.id;
+        editButton.dataset.name = category.title;
+        editButton.textContent = 'Редактировать';
 
         const removeButton = document.createElement('button');
         removeButton.className = 'card-btn-remove-expenses';
@@ -85,7 +76,7 @@ export class Expenses {
         removeButton.dataset.id = category.id;
         removeButton.textContent = 'Удалить';
 
-        cardButtons.appendChild(editLink);
+        cardButtons.appendChild(editButton);
         cardButtons.appendChild(removeButton);
 
         card.appendChild(cardTitle);
@@ -95,6 +86,12 @@ export class Expenses {
     }
 
     setupEvents() {
+        // Обработчик для кнопки добавления
+        this.addButton.addEventListener('click', () => {
+            this.openNewRoute('/expenses-create');
+        });
+
+        // Обработчики для динамических элементов
         document.addEventListener('click', async (e) => {
             if (e.target.classList.contains('card-btn-remove-expenses')) {
                 e.preventDefault();
