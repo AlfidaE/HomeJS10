@@ -10,9 +10,12 @@ export class IncomeExpenseEdit {
         this.categories = [];
         this.operation = null;
 
-        this.initElements();
-        this.initEvents();
-        this.loadOperationData();
+        // Откладываем инициализацию до полной загрузки DOM
+        setTimeout(() => {
+            this.initElements();
+            this.initEvents();
+            this.loadOperationData();
+        }, 100);
     }
 
     initElements() {
@@ -59,13 +62,11 @@ export class IncomeExpenseEdit {
         }
     }
 
-    // Определение endpoint: Выбирает правильный URL в зависимости от типа операции
     async loadCategories() {
         try {
             const endpoint = this.operationType === 'income' ? '/categories/income' : '/categories/expense';
             const response = await CustomHttp.request(config.host + endpoint);
 
-            // Сохранение категорий: Если ответ - массив, сохраняет его и обновляет select
             if (response && Array.isArray(response)) {
                 this.categories = response;
                 this.populateCategories();
@@ -75,23 +76,18 @@ export class IncomeExpenseEdit {
         }
     }
 
-    // Заполнение формы: Проверяет, есть ли данные операции
     populateForm() {
         if (!this.operation) return;
 
-        // Установка типа операции: Находит и выбирает option с нужным значением, блокирует выбор
-        // Заполняем поля формы данными операции
         if (this.typeSelect && this.operationType) {
             Array.from(this.typeSelect.options).forEach(option => {
                 if (option.value === this.operationType) {
                     option.selected = true;
                 }
             });
-            // Блокируем выбор типа
             this.typeSelect.disabled = true;
         }
 
-        // Заполнение полей: Устанавливает значения из данных операции
         if (this.amountInput) {
             this.amountInput.value = this.operation.amount;
         }
@@ -104,49 +100,48 @@ export class IncomeExpenseEdit {
             this.commentInput.value = this.operation.comment || '';
         }
     }
-        // Очистка и добавление заглушки: Удаляет старые options, добавляет placeholder
+
     populateCategories() {
         if (!this.categorySelect || !this.operation) return;
 
-        // Создание options: Для каждой категории создает element option
-        // Очищаем select категорий
         this.categorySelect.innerHTML = '<option value="" disabled selected>Категория...</option>';
 
-        // Добавляем категории из бэкенда
         this.categories.forEach(category => {
             const option = document.createElement('option');
             option.value = category.id;
             option.textContent = category.title;
 
-            // Выбираем категорию операции
             if (this.operation.category_id === category.id || this.operation.category === category.title) {
                 option.selected = true;
             }
-        // Добавление option в select
+
             this.categorySelect.appendChild(option);
         });
 
-        // Если категория не найдена в списке, выбираем первое значение
         if (!this.categorySelect.value && this.categories.length > 0) {
             this.categorySelect.value = this.categories[0].id;
         }
     }
 
     initEvents() {
-        // Кнопка сохранить
-        this.saveButton.addEventListener('click', () => this.updateOperation());
+        // Проверяем, что кнопки существуют перед добавлением обработчиков
+        if (this.saveButton) {
+            this.saveButton.addEventListener('click', () => this.updateOperation());
+        } else {
+            console.error('Save button not found');
+        }
 
-        // Кнопка отмена
-        this.cancelButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (typeof this.openNewRoute === 'function') {
-                this.openNewRoute('/income-expense-table');
-            } else {
-                this.openNewRoute('/income-expense-table');
-            }
-        });
+        if (this.cancelButton) {
+            this.cancelButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (typeof this.openNewRoute === 'function') {
+                    this.openNewRoute('/income-expense-table');
+                }
+            });
+        } else {
+            console.error('Cancel button not found');
+        }
 
-        // Скрытие ошибок: При вводе в любом поле скрывает сообщения об ошибках
         // Валидация при вводе
         [this.amountInput, this.dateInput, this.categorySelect].forEach(element => {
             if (element) {
@@ -228,21 +223,15 @@ export class IncomeExpenseEdit {
                 category_id: parseInt(this.categorySelect.value)
             };
 
-            console.log('Отправляемые данные для обновления:', operationData);
-
             const response = await CustomHttp.request(
                 `${config.host}/operations/${this.operationId}`,
                 'PUT',
                 operationData
             );
 
-            console.log('Ответ сервера:', response);
-
             if (response && response.id) {
                 if (typeof this.openNewRoute === 'function') {
                     this.openNewRoute('/income-expense-table');
-                } else {
-                    window.location.href = '/income-expense-table';
                 }
             } else {
                 throw new Error('Не удалось обновить операцию');
