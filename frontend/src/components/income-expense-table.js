@@ -7,67 +7,79 @@ export class IncomeExpenseTable {
     constructor(openNewRoute) {
         this.openNewRoute = openNewRoute;
         this.operations = [];
+        this.filteredOperations = [];
         this.recordsElement = document.getElementById('records');
         this.popup = document.querySelector('.popup-income-expense-table');
         this.currentOperationId = null;
+        this.activeFilter = 'today'; // По умолчанию активен фильтр "Сегодня"
+        this.startDate = null;
+        this.endDate = null;
+        this.startDatePicker = null;
+        this.endDatePicker = null;
 
         this.init();
-        // this.initDate();
+        this.initDate();
     }
 
     async init() {
         await this.loadOperations();
         this.setupEvents();
+        this.applyFilter('today'); // Применяем фильтр по умолчанию
     }
 
-    // initDate() {
-    //     const startDateElem = document.getElementById("startDate");
-    //     const startDateLink = document.getElementById("startDateLink");
-    //     const endDateElem = document.getElementById("endDate");
-    //     const endDateLink = document.getElementById("endDateLink");
-    //     const weekBtn = document.getElementById("week");
-    //
-    //     if (!startDateElem || !startDateLink || !endDateElem || !endDateLink || !weekBtn) {
-    //         console.error('Date elements not found');
-    //         return;
-    //     }
-    //
-    //     const startDatePicker = flatpickr(startDateElem, {
-    //         locale: Russian,
-    //         dateFormat: "d.m.Y",
-    //         onChange: function(selectedDates, dateStr) {
-    //             startDateLink.textContent = dateStr;
-    //         }
-    //     });
-    //
-    //     const endDatePicker = flatpickr(endDateElem, {
-    //         locale: Russian,
-    //         dateFormat: "d.m.Y",
-    //         onChange: function(selectedDates, dateStr) {
-    //             endDateLink.textContent = dateStr;
-    //         }
-    //     });
-    //
-    //     startDateLink.addEventListener("click", function(e) {
-    //         e.preventDefault();
-    //         e.stopPropagation();
-    //         startDatePicker.open();
-    //     });
-    //
-    //     endDateLink.addEventListener("click", function(e) {
-    //         e.preventDefault();
-    //         e.stopPropagation();
-    //         endDatePicker.open();
-    //     });
-    //
-    //     weekBtn.addEventListener("click", function() {
-    //         const endDate = new Date();
-    //         const startDate = new Date();
-    //         startDate.setDate(endDate.getDate() - 7);
-    //         startDatePicker.setDate(startDate);
-    //         endDatePicker.setDate(endDate);
-    //     });
-    // }
+    initDate() {
+        const startDateElem = document.getElementById("startDate");
+        const startDateLink = document.getElementById("startDateLink");
+        const endDateElem = document.getElementById("endDate");
+        const endDateLink = document.getElementById("endDateLink");
+        const dateRangeSelector = document.querySelector('.date-range-selector');
+
+        if (!startDateElem || !startDateLink || !endDateElem || !endDateLink || !dateRangeSelector) {
+            console.error('Date elements not found');
+            return;
+        }
+
+        // Инициализация flatpickr для выбора дат
+        this.startDatePicker = flatpickr(startDateElem, {
+            locale: Russian,
+            dateFormat: "d.m.Y",
+            onChange: (selectedDates, dateStr) => {
+                startDateLink.textContent = dateStr;
+                this.startDate = selectedDates[0];
+                if (this.startDate && this.endDate) {
+                    this.applyCustomDateFilter();
+                }
+            }
+        });
+
+        this.endDatePicker = flatpickr(endDateElem, {
+            locale: Russian,
+            dateFormat: "d.m.Y",
+            onChange: (selectedDates, dateStr) => {
+                endDateLink.textContent = dateStr;
+                this.endDate = selectedDates[0];
+                if (this.startDate && this.endDate) {
+                    this.applyCustomDateFilter();
+                }
+            }
+        });
+
+        // Обработчики для открытия datepicker
+        startDateLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.startDatePicker.open();
+        });
+
+        endDateLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.endDatePicker.open();
+        });
+
+        // Скрываем блок выбора интервала по умолчанию
+        dateRangeSelector.style.display = 'none';
+    }
 
     async loadOperations() {
         try {
@@ -75,13 +87,107 @@ export class IncomeExpenseTable {
 
             if (response && Array.isArray(response)) {
                 this.operations = response;
-                this.showRecords(this.operations);
+                // Сортируем операции по дате (новые сверху)
+                this.operations.sort((a, b) => new Date(b.date) - new Date(a.date));
             } else {
                 console.error('Неверный формат ответа:', response);
             }
         } catch (error) {
             console.error('Ошибка при загрузке операций:', error);
         }
+    }
+
+    // Метод для установки активного фильтра
+    setActiveFilter(filterId) {
+        // Убираем активный класс со всех кнопок
+        const buttons = document.querySelectorAll('.btn-choice-date');
+        buttons.forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Добавляем активный класс выбранной кнопке
+        const activeButton = document.getElementById(filterId);
+        if (activeButton) {
+            activeButton.classList.add('active');
+        }
+
+        this.activeFilter = filterId;
+
+        // Показываем/скрываем блок выбора интервала дат
+        const dateRangeSelector = document.querySelector('.date-range-selector');
+        if (dateRangeSelector) {
+            dateRangeSelector.style.display = filterId === 'interval' ? 'block' : 'none';
+        }
+    }
+
+    // Метод для применения фильтра
+    applyFilter(filterId) {
+        this.setActiveFilter(filterId);
+
+        const today = new Date();
+        let startDate, endDate;
+
+        switch (filterId) {
+            case 'today':
+                startDate = new Date(today);
+                endDate = new Date(today);
+                break;
+            case 'week':
+                startDate = new Date(today);
+                startDate.setDate(today.getDate() - today.getDay()); // Начало недели (понедельник)
+                endDate = new Date(today);
+                endDate.setDate(today.getDate() + (6 - today.getDay())); // Конец недели (воскресенье)
+                break;
+            case 'month':
+                startDate = new Date(today.getFullYear(), today.getMonth(), 1); // Первый день месяца
+                endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0); // Последний день месяца
+                break;
+            case 'year':
+                startDate = new Date(today.getFullYear(), 0, 1); // 1 января
+                endDate = new Date(today.getFullYear(), 11, 31); // 31 декабря
+                break;
+            case 'all':
+                startDate = null;
+                endDate = null;
+                break;
+            case 'interval':
+                // Для интервала даты устанавливаются через UI
+                return;
+            default:
+                return;
+        }
+
+        this.filterOperationsByDate(startDate, endDate);
+    }
+
+    // Метод для применения пользовательского интервала дат
+    applyCustomDateFilter() {
+        if (this.startDate && this.endDate) {
+            this.filterOperationsByDate(this.startDate, this.endDate);
+        }
+    }
+
+    // Метод для фильтрации операций по дате
+    filterOperationsByDate(startDate, endDate) {
+        if (startDate && endDate) {
+            // Фильтруем операции по диапазону дат
+            this.filteredOperations = this.operations.filter(operation => {
+                const operationDate = new Date(operation.date);
+                // Устанавливаем время на 00:00:00 для корректного сравнения
+                operationDate.setHours(0, 0, 0, 0);
+                const start = new Date(startDate);
+                start.setHours(0, 0, 0, 0);
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999); // До конца дня
+
+                return operationDate >= start && operationDate <= end;
+            });
+        } else {
+            // Если даты не указаны, показываем все операции
+            this.filteredOperations = [...this.operations];
+        }
+
+        this.showRecords(this.filteredOperations);
     }
 
     showRecords(operations) {
@@ -100,12 +206,11 @@ export class IncomeExpenseTable {
             return;
         }
 
-        for (let i = 0; i < operations.length; i++) {
-            const operation = operations[i];
+        operations.forEach((operation, index) => {
             const trElement = document.createElement('tr');
 
-            // № операции
-            trElement.insertCell().innerText = operation.id;
+            // № операции (порядковый номер)
+            trElement.insertCell().innerText = index + 1;
 
             // Тип
             const typeCell = trElement.insertCell();
@@ -146,7 +251,7 @@ export class IncomeExpenseTable {
             `;
 
             this.recordsElement.appendChild(trElement);
-        }
+        });
     }
 
     formatDate(dateString) {
@@ -169,6 +274,14 @@ export class IncomeExpenseTable {
 
         document.getElementById('income-expense-table-btn-remove')?.addEventListener('click', () => {
             this.openNewRoute('/income-expense-create?type=expense');
+        });
+
+        // Обработчики для кнопок фильтров по датам
+        const filterButtons = ['today', 'week', 'month', 'year', 'all', 'interval'];
+        filterButtons.forEach(filterId => {
+            document.getElementById(filterId)?.addEventListener('click', () => {
+                this.applyFilter(filterId);
+            });
         });
 
         // Обработчики для кнопок удаления и редактирования операций
@@ -227,7 +340,8 @@ export class IncomeExpenseTable {
             if (response && !response.error) {
                 // Удаляем операцию из массива и перерисовываем таблицу
                 this.operations = this.operations.filter(op => op.id !== parseInt(this.currentOperationId));
-                this.showRecords(this.operations);
+                // Повторно применяем текущий фильтр
+                this.applyFilter(this.activeFilter);
             } else {
                 console.error('Ошибка при удалении:', response.error);
                 alert('Не удалось удалить операцию');

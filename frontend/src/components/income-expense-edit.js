@@ -53,18 +53,19 @@ export class IncomeExpenseEdit {
 
             // Загружаем категории
             await this.loadCategories();
-
         } catch (error) {
             console.error('Ошибка при загрузке данных:', error);
             this.showError('Не удалось загрузить данные для редактирования');
         }
     }
 
+    // Определение endpoint: Выбирает правильный URL в зависимости от типа операции
     async loadCategories() {
         try {
             const endpoint = this.operationType === 'income' ? '/categories/income' : '/categories/expense';
             const response = await CustomHttp.request(config.host + endpoint);
 
+            // Сохранение категорий: Если ответ - массив, сохраняет его и обновляет select
             if (response && Array.isArray(response)) {
                 this.categories = response;
                 this.populateCategories();
@@ -74,9 +75,11 @@ export class IncomeExpenseEdit {
         }
     }
 
+    // Заполнение формы: Проверяет, есть ли данные операции
     populateForm() {
         if (!this.operation) return;
 
+        // Установка типа операции: Находит и выбирает option с нужным значением, блокирует выбор
         // Заполняем поля формы данными операции
         if (this.typeSelect && this.operationType) {
             Array.from(this.typeSelect.options).forEach(option => {
@@ -88,6 +91,7 @@ export class IncomeExpenseEdit {
             this.typeSelect.disabled = true;
         }
 
+        // Заполнение полей: Устанавливает значения из данных операции
         if (this.amountInput) {
             this.amountInput.value = this.operation.amount;
         }
@@ -100,10 +104,11 @@ export class IncomeExpenseEdit {
             this.commentInput.value = this.operation.comment || '';
         }
     }
-
+        // Очистка и добавление заглушки: Удаляет старые options, добавляет placeholder
     populateCategories() {
         if (!this.categorySelect || !this.operation) return;
 
+        // Создание options: Для каждой категории создает element option
         // Очищаем select категорий
         this.categorySelect.innerHTML = '<option value="" disabled selected>Категория...</option>';
 
@@ -117,7 +122,7 @@ export class IncomeExpenseEdit {
             if (this.operation.category_id === category.id || this.operation.category === category.title) {
                 option.selected = true;
             }
-
+        // Добавление option в select
             this.categorySelect.appendChild(option);
         });
 
@@ -137,10 +142,11 @@ export class IncomeExpenseEdit {
             if (typeof this.openNewRoute === 'function') {
                 this.openNewRoute('/income-expense-table');
             } else {
-                window.location.href = '/income-expense-table';
+                this.openNewRoute('/income-expense-table');
             }
         });
 
+        // Скрытие ошибок: При вводе в любом поле скрывает сообщения об ошибках
         // Валидация при вводе
         [this.amountInput, this.dateInput, this.categorySelect].forEach(element => {
             if (element) {

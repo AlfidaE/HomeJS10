@@ -61,7 +61,11 @@
     justify-content: center;
     align-items: center;
 }
-
+.btn-choice-date.active {
+    background-color: #6c757d;
+    color: white;
+    border-color: #6c757d;
+}
 .income-expense-table-btn button:hover {
     background-color: #6c757d;
     color: white;
