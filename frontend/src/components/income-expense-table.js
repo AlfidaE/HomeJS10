@@ -7,11 +7,10 @@ export class IncomeExpenseTable {
     constructor(openNewRoute) {
         this.openNewRoute = openNewRoute;
         this.operations = [];
-        this.filteredOperations = [];
         this.recordsElement = document.getElementById('records');
         this.popup = document.querySelector('.popup-income-expense-table');
         this.currentOperationId = null;
-        this.activeFilter = 'today'; // По умолчанию активен фильтр "Сегодня"
+        this.activeFilter = 'today';
         this.startDate = null;
         this.endDate = null;
         this.startDatePicker = null;
@@ -22,9 +21,9 @@ export class IncomeExpenseTable {
     }
 
     async init() {
-        await this.loadOperations();
+        await this.loadOperations('today'); // Загружаем с фильтром "Сегодня" по умолчанию
         this.setupEvents();
-        this.applyFilter('today'); // Применяем фильтр по умолчанию
+        this.setActiveFilter('today'); // Устанавливаем активный фильтр
     }
 
     initDate() {
@@ -39,32 +38,30 @@ export class IncomeExpenseTable {
             return;
         }
 
-        // Инициализация flatpickr для выбора дат
         this.startDatePicker = flatpickr(startDateElem, {
             locale: Russian,
-            dateFormat: "d.m.Y",
+            dateFormat: "Y-m-d",
             onChange: (selectedDates, dateStr) => {
-                startDateLink.textContent = dateStr;
-                this.startDate = selectedDates[0];
-                if (this.startDate && this.endDate) {
-                    this.applyCustomDateFilter();
+                startDateLink.textContent = this.formatDisplayDate(dateStr);
+                this.startDate = dateStr;
+                if (this.activeFilter === 'interval' && this.startDate && this.endDate) {
+                    this.loadOperations('interval', this.startDate, this.endDate);
                 }
             }
         });
 
         this.endDatePicker = flatpickr(endDateElem, {
             locale: Russian,
-            dateFormat: "d.m.Y",
+            dateFormat: "Y-m-d",
             onChange: (selectedDates, dateStr) => {
-                endDateLink.textContent = dateStr;
-                this.endDate = selectedDates[0];
-                if (this.startDate && this.endDate) {
-                    this.applyCustomDateFilter();
+                endDateLink.textContent = this.formatDisplayDate(dateStr);
+                this.endDate = dateStr;
+                if (this.activeFilter === 'interval' && this.startDate && this.endDate) {
+                    this.loadOperations('interval', this.startDate, this.endDate);
                 }
             }
         });
 
-        // Обработчики для открытия datepicker
         startDateLink.addEventListener("click", (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -77,18 +74,41 @@ export class IncomeExpenseTable {
             this.endDatePicker.open();
         });
 
-        // Скрываем блок выбора интервала по умолчанию
         dateRangeSelector.style.display = 'none';
     }
 
-    async loadOperations() {
+    // Метод для загрузки операций с фильтрацией
+    async loadOperations(period = null, dateFrom = null, dateTo = null) {
         try {
-            const response = await CustomHttp.request(config.host + '/operations');
+            let url = config.host + '/operations';
+            const params = new URLSearchParams();
+
+            // Всегда передаем period, даже для 'all'
+            if (period) {
+                params.append('period', period);
+            }
+
+            if (dateFrom) {
+                params.append('dateFrom', dateFrom);
+            }
+
+            if (dateTo) {
+                params.append('dateTo', dateTo);
+            }
+
+            if (params.toString()) {
+                url += '?' + params.toString();
+            }
+
+            console.log('Loading operations from:', url); // Для отладки
+
+            const response = await CustomHttp.request(url);
 
             if (response && Array.isArray(response)) {
                 this.operations = response;
                 // Сортируем операции по дате (новые сверху)
                 this.operations.sort((a, b) => new Date(b.date) - new Date(a.date));
+                this.showRecords(this.operations);
             } else {
                 console.error('Неверный формат ответа:', response);
             }
@@ -124,70 +144,55 @@ export class IncomeExpenseTable {
     applyFilter(filterId) {
         this.setActiveFilter(filterId);
 
-        const today = new Date();
-        let startDate, endDate;
+        let period = filterId;
+        let dateFrom = null;
+        let dateTo = null;
 
-        switch (filterId) {
-            case 'today':
-                startDate = new Date(today);
-                endDate = new Date(today);
-                break;
-            case 'week':
-                startDate = new Date(today);
-                startDate.setDate(today.getDate() - today.getDay()); // Начало недели (понедельник)
-                endDate = new Date(today);
-                endDate.setDate(today.getDate() + (6 - today.getDay())); // Конец недели (воскресенье)
-                break;
-            case 'month':
-                startDate = new Date(today.getFullYear(), today.getMonth(), 1); // Первый день месяца
-                endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0); // Последний день месяца
-                break;
-            case 'year':
-                startDate = new Date(today.getFullYear(), 0, 1); // 1 января
-                endDate = new Date(today.getFullYear(), 11, 31); // 31 декабря
-                break;
-            case 'all':
-                startDate = null;
-                endDate = null;
-                break;
-            case 'interval':
-                // Для интервала даты устанавливаются через UI
-                return;
-            default:
-                return;
+        // Для всех фильтров, включая 'all', передаем period
+        // Сервер сам решает как обрабатывать каждый период
+        if (filterId !== 'interval') {
+            const today = new Date();
+
+            switch (filterId) {
+                case 'today':
+                    dateFrom = today.toISOString().split('T')[0];
+                    dateTo = dateFrom;
+                    break;
+                case 'week':
+                    const weekStart = new Date(today);
+                    weekStart.setDate(today.getDate() - today.getDay());
+                    dateFrom = weekStart.toISOString().split('T')[0];
+
+                    const weekEnd = new Date(today);
+                    weekEnd.setDate(today.getDate() + (6 - today.getDay()));
+                    dateTo = weekEnd.toISOString().split('T')[0];
+                    break;
+                case 'month':
+                    dateFrom = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+                    dateTo = new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
+                    break;
+                case 'year':
+                    dateFrom = new Date(today.getFullYear(), 0, 1).toISOString().split('T')[0];
+                    dateTo = new Date(today.getFullYear(), 11, 31).toISOString().split('T')[0];
+                    break;
+                case 'all':
+                    // Для 'all' сервер сам установит правильные даты (вычитает 1 год)
+                    // Не нужно передавать dateFrom и dateTo
+                    dateFrom = null;
+                    dateTo = null;
+                    break;
+            }
         }
 
-        this.filterOperationsByDate(startDate, endDate);
+        // Загружаем операции с выбранным фильтром
+        this.loadOperations(period, dateFrom, dateTo);
     }
 
-    // Метод для применения пользовательского интервала дат
-    applyCustomDateFilter() {
-        if (this.startDate && this.endDate) {
-            this.filterOperationsByDate(this.startDate, this.endDate);
-        }
-    }
-
-    // Метод для фильтрации операций по дате
-    filterOperationsByDate(startDate, endDate) {
-        if (startDate && endDate) {
-            // Фильтруем операции по диапазону дат
-            this.filteredOperations = this.operations.filter(operation => {
-                const operationDate = new Date(operation.date);
-                // Устанавливаем время на 00:00:00 для корректного сравнения
-                operationDate.setHours(0, 0, 0, 0);
-                const start = new Date(startDate);
-                start.setHours(0, 0, 0, 0);
-                const end = new Date(endDate);
-                end.setHours(23, 59, 59, 999); // До конца дня
-
-                return operationDate >= start && operationDate <= end;
-            });
-        } else {
-            // Если даты не указаны, показываем все операции
-            this.filteredOperations = [...this.operations];
-        }
-
-        this.showRecords(this.filteredOperations);
+    // Форматирование даты для отображения
+    formatDisplayDate(dateString) {
+        if (!dateString) return 'Дата';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ru-RU');
     }
 
     showRecords(operations) {
@@ -338,9 +343,7 @@ export class IncomeExpenseTable {
             );
 
             if (response && !response.error) {
-                // Удаляем операцию из массива и перерисовываем таблицу
-                this.operations = this.operations.filter(op => op.id !== parseInt(this.currentOperationId));
-                // Повторно применяем текущий фильтр
+                // После удаления перезагружаем операции с текущим фильтром
                 this.applyFilter(this.activeFilter);
             } else {
                 console.error('Ошибка при удалении:', response.error);
