@@ -124,6 +124,9 @@ export class IncomeExpenseEdit {
     }
 
     initEvents() {
+        if(!this.saveButton || !this.cancelButton) {
+            return false;
+        }
         // Проверяем, что кнопки существуют перед добавлением обработчиков
         if (this.saveButton) {
             this.saveButton.addEventListener('click', () => this.updateOperation());

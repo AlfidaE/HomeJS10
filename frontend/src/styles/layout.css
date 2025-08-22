@@ -132,7 +132,6 @@
     padding: 0;
     width: 100%;
 }
-
 .submenu-link {
     display: block;
     padding: 8px 16px 8px 17px; /* Увеличенный отступ для вложенности */
@@ -146,7 +145,6 @@
     text-align: left;
     border-radius: 5px;
 }
-
 .submenu-link:hover {
     background-color: #0D6EFD;
     color: white;
@@ -156,8 +154,6 @@
 .submenu-link:before {
     display: none;
 }
-
-
 .balance-container {
     padding: 16px;
     margin-top: auto;
@@ -183,8 +179,6 @@
     flex-wrap: wrap;
     display: flex;
 }
-
-
 .dropdown-toggle {
     display: flex;
     align-items: center;
@@ -194,19 +188,18 @@
     width: 100%;
     text-align: left;
 }
-#profile-name {
+.profile-name {
     font-size: 14px;
     line-height: 171%;
     color: #052c65;
+    font-family: RobotoRegular, sans-serif;
     list-style: none;
     text-decoration: none;
-    font-family: RobotoRegular, sans-serif;
-    flex-wrap: wrap;
-    display: flex;
+    word-wrap: break-word; /* Перенос длинных слов */
+    white-space: normal; /* Разрешаем перенос */
+    overflow-wrap: break-word; /* Современная альтернатива word-wrap */
+    max-width: 120px; /* Ограничиваем максимальную ширину */
 }
-
-
-
 .content-wrapper {
     flex: 1;
     background-color: white;
@@ -214,5 +207,4 @@
     border-radius: 4px;
     height: 100vh;
     overflow: auto;
-
 }
