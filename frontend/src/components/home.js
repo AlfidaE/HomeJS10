@@ -73,16 +73,19 @@ export class Home {
         const expenseData = {};
 
         this.operations.forEach(operation => {
+            // Определяем название категории: если категория отсутствует, используем "Без категории"
+            const categoryName = operation.category || 'Без категории';
+
             if (operation.type === 'income') {
-                if (!incomeData[operation.category]) {
-                    incomeData[operation.category] = 0;
+                if (!incomeData[categoryName]) {
+                    incomeData[categoryName] = 0;
                 }
-                incomeData[operation.category] += operation.amount;
+                incomeData[categoryName] += operation.amount;
             } else if (operation.type === 'expense') {
-                if (!expenseData[operation.category]) {
-                    expenseData[operation.category] = 0;
+                if (!expenseData[categoryName]) {
+                    expenseData[categoryName] = 0;
                 }
-                expenseData[operation.category] += operation.amount;
+                expenseData[categoryName] += operation.amount;
             }
         });
 
