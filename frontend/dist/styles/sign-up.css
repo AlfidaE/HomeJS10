@@ -14,6 +14,8 @@
 
 .error-sign-up {
     margin-bottom: 1rem;
+    max-width: 397px;
+    color: #b80a0a;
 }
 
 .input-group-text {
@@ -23,11 +25,13 @@
 .input-group-text svg {
     flex-shrink: 0;
 }
-
+.form-control::placeholder {
+    color: #6C757D;
+}
 .form-control {
     font-size: 15px;
     line-height: 160%;
-    color: #6C757D;
+    color: #000;
     font-family: RobotoRegular, sans-serif;
 }
 

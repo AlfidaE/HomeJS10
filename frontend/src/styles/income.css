@@ -70,6 +70,8 @@
 .card-add {
     position: relative;
     height: 121px;
+    background: none;
+    cursor: pointer;
 }
 
 .card-btn-add-income {
@@ -92,9 +94,9 @@
     width: 530px;
     height: 184px;
     background: #fff;
-    position: fixed;
-    top: 50%;
-    left: 50%;
+    position: absolute;
+    top: 40%;
+    left: 40%;
     display: none;
 }
 .popup-income p {

@@ -167,22 +167,3 @@ export class SignUp {
     }
 }
 
-// const result = await response.json();
-//
-// if (!result ||
-//     result.error ||
-//     !result.user?.id ||
-//     !result.user?.name ||
-//     !result.user?.lastName) {
-//        this.commonErrorElement.style.display = 'block';
-//     return;
-// }
-//
-//
-// AuthUtils.setTokens(result.accessToken, result.refreshToken);
-// AuthUtils.setAuthInfo({
-//     id: result.user.id,
-//     name: result.user.name,
-//     lastName: result.user.lastName,
-//     email: this.emailElement.value.trim()
-// });

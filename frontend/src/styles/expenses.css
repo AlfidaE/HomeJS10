@@ -91,9 +91,9 @@
     width: 530px;
     height: 184px;
     background: #fff;
-    position: fixed;
-    top: 50%;
-    left: 50%;
+    position: absolute;
+    top: 40%;
+    left: 40%;
     display: none;
 }
 .popup-expenses p {

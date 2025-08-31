@@ -12,6 +12,8 @@ import {Login} from "./components/login.js";
 import {SignUp} from "./components/sign-up.js";
 import {Logout} from "./components/logout.js";
 import {AuthUtils} from "./utils/auth-utils.js";
+import config from "../config/config.js";
+import {CustomHttp} from "./utils/custom-http.js";
 
 
 
@@ -31,6 +33,7 @@ export class Router {
                 title: 'Главная',
                 filePathTemplate: '/templates/pages/home.html',
                 useLayout: '/templates/layout.html',
+                protected: true,
                 load: () => {
                     new Home();
                 },
@@ -47,6 +50,7 @@ export class Router {
                 route: '/404',
                 title: 'Страница не найдена',
                 filePathTemplate: '/templates/404.html',
+                protected: false,
                 useLayout: false,
             },
 
@@ -56,6 +60,7 @@ export class Router {
                 title: 'Авторизация',
                 filePathTemplate: '/templates/pages/login.html',
                 useLayout: false,
+                protected: false,
                 load: () => {
                     new Login(this.openNewRoute.bind(this));
 
@@ -66,6 +71,7 @@ export class Router {
                 title: 'Регистрация',
                 filePathTemplate: '/templates/pages/sign-up.html',
                 useLayout: false,
+                protected: false,
                 load: () => {
                     new SignUp(this.openNewRoute.bind(this));
                 },
@@ -81,8 +87,9 @@ export class Router {
                 title: 'Доходы',
                 filePathTemplate: '/templates/pages/income.html',
                 useLayout: '/templates/layout.html',
+                protected: true,
                 load: () => {
-                    new Income();
+                    new Income(this.openNewRoute.bind(this));
                 },
             },
             {
@@ -90,8 +97,9 @@ export class Router {
                 title: 'Создание категории доходов',
                 filePathTemplate: '/templates/pages/income-create.html',
                 useLayout: '/templates/layout.html',
+                protected: true,
                 load: () => {
-                    new IncomeCreate();
+                    new IncomeCreate(this.openNewRoute.bind(this));
                 },
             },
             {
@@ -99,8 +107,9 @@ export class Router {
                 title: 'Редактирование категории доходов',
                 filePathTemplate: '/templates/pages/income-edit.html',
                 useLayout: '/templates/layout.html',
+                protected: true,
                 load: () => {
-                    new IncomeEdit();
+                    new IncomeEdit(this.openNewRoute.bind(this));
                 },
             },
             {
@@ -108,8 +117,9 @@ export class Router {
                 title: 'Расходы',
                 filePathTemplate: '/templates/pages/expenses.html',
                 useLayout: '/templates/layout.html',
+                protected: true,
                 load: () => {
-                    new Expenses();
+                    new Expenses(this.openNewRoute.bind(this));
                 },
             },
             {
@@ -117,8 +127,9 @@ export class Router {
                 title: 'Создание категории расходов',
                 filePathTemplate: '/templates/pages/expenses-create.html',
                 useLayout: '/templates/layout.html',
+                protected: true,
                 load: () => {
-                    new ExpensesCreate();
+                    new ExpensesCreate(this.openNewRoute.bind(this));
                 },
             },
             {
@@ -126,8 +137,9 @@ export class Router {
                 title: 'Редактирование категории расходов',
                 filePathTemplate: '/templates/pages/expenses-edit.html',
                 useLayout: '/templates/layout.html',
+                protected: true,
                 load: () => {
-                    new ExpensesEdit();
+                    new ExpensesEdit(this.openNewRoute.bind(this));
                 },
             },
             {
@@ -135,8 +147,9 @@ export class Router {
                 title: 'Доходы и расходы',
                 filePathTemplate: '/templates/pages/income-expense-table.html',
                 useLayout: '/templates/layout.html',
+                protected: true,
                 load: () => {
-                    new IncomeExpenseTable();
+                    new IncomeExpenseTable(this.openNewRoute.bind(this));
                 },
                 scripts: [
                     'flatpickr.min.js', // календарь
@@ -153,8 +166,9 @@ export class Router {
                 title: ' Создание дохода/расхода',
                 filePathTemplate: '/templates/pages/income-expense-create.html',
                 useLayout: '/templates/layout.html',
+                protected: true,
                 load: () => {
-                    new IncomeExpenseCreate();
+                    new IncomeExpenseCreate(this.openNewRoute.bind(this));
                 },
             },
             {
@@ -162,8 +176,9 @@ export class Router {
                 title: ' Редактирование дохода/расхода',
                 filePathTemplate: '/templates/pages/income-expense-edit.html',
                 useLayout: '/templates/layout.html',
+                protected: true,
                 load: () => {
-                    new IncomeExpenseEdit();
+                    new IncomeExpenseEdit(this.openNewRoute.bind(this));
                 },
             },
         ]
@@ -172,7 +187,6 @@ export class Router {
     initEvents() {
         window.addEventListener('DOMContentLoaded', this.activateRoute.bind(this));
         window.addEventListener('popstate', this.activateRoute.bind(this));
-        // document.addEventListener('click', this.openNewRoute.bind(this));
         document.addEventListener('click', this.clickHandler.bind(this));
 
     }
@@ -205,24 +219,24 @@ export class Router {
         }
     }
 
+
+    async loadBalance() {
+
+        try {
+            const result = await CustomHttp.request(config.host + '/balance');
+            const balanceElement = document.querySelector('.balance-container span');
+            if (balanceElement) {
+                balanceElement.textContent = result?.balance ?? '';
+            }
+        } catch (error) {
+            console.error('Ошибка при загрузке баланса:', error);
+        }
+    }
+
     async activateRoute(e, oldRoute = null) {
-
-        // Проверка авторизации для защищенных маршрутов
-        const protectedRoutes = [
-            '/income',
-            '/income-create',
-            '/income-edit',
-            '/expenses',
-            '/expenses-create',
-            '/expenses-edit',
-            '/income-expense-table',
-            '/income-expense-create',
-            '/income-expense-edit'
-        ];
-
         const currentPath = window.location.pathname;
         const isAuthRoute = currentPath === '/login' || currentPath === '/sign-up';
-        const isProtectedRoute = protectedRoutes.includes(currentPath);
+        const isProtectedRoute = this.routes.find(item => item.route === currentPath)?.protected === true;
         const userInfo = AuthUtils.getUserInfo(AuthUtils.userInfoTokenKey);
         const accessToken = localStorage.getItem(AuthUtils.accessTokenKey);
 
@@ -298,21 +312,29 @@ export class Router {
                         this.contentPageElement.innerHTML = await fetch(newRoute.useLayout).then(response => response.text());
                         contentBlock = document.getElementById('content-layout');
 
-                            this.profileNameElement = document.getElementById('profile-name');
-                        console.log(this.profileNameElement)
+                        // Всегда получаем актуальные данные пользователя
+                        this.profileNameElement = document.getElementById('profile-name');
 
-                        if (!this.userName) {
-                            let userInfo = AuthUtils.getUserInfo(AuthUtils.userInfoTokenKey);
-                            if (userInfo) {
-                                userInfo = JSON.parse(userInfo);
-                                if (userInfo.name) {
-                                    this.userName = `${userInfo.name} ${userInfo.lastName}`;
+                        // Сбрасываем кэшированное имя и получаем заново
+                        this.userName = null;
+                        const userInfo = AuthUtils.getUserInfo(AuthUtils.userInfoTokenKey);
+
+                        if (userInfo) {
+                            try {
+                                const userData = typeof userInfo === 'string' ? JSON.parse(userInfo) : userInfo;
+                                if (userData.name && userData.lastName) {
+                                    this.userName = `${userData.name} ${userData.lastName}`;
                                 }
+                            } catch (e) {
+                                console.error('Error parsing user info:', e);
                             }
                         }
-                        this.profileNameElement.innerText = this.userName;
 
+                        if (this.profileNameElement) {
+                            this.profileNameElement.innerText = this.userName || 'Пользователь';
+                        }
 
+                        await this.loadBalance();
                     }
                     contentBlock.innerHTML = await fetch(newRoute.filePathTemplate).then(response => response.text());
 
